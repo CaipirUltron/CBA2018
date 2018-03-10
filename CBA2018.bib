@@ -1,0 +1,428 @@
+@article{Abdo2013,
+annote = {Dynamic equations of a 2DoF gimbal system considering cross-coupling and also the base angular motion (accel. and vel.)!
+Only angular motion is considered, so that the dynamic formulations are simplified (H'+wxH=T)
+The authors analyze the effects of base motion and dynamic unbalance (off-diagonal elements of the inertia matrix). The frames share origins and there is no static mass unbalance (gravity effects).
+The base motion introduces torques on the joints by the kinematic relationships.
+The references are good.},
+author = {Abdo, Maher and Vali, Ahmad Reza and Toloei, Alireza and Arvan, Mohammad Reza},
+doi = {10.5772/56963},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Abdo et al. - 2013 - Research on the cross-coupling of a two axes gimbal system with dynamic unbalance.pdf:pdf},
+issn = {17298806},
+journal = {International Journal of Advanced Robotic Systems},
+keywords = {Gimbal System,Inertia Stabilization System,Line of Sight,Rate Gyro,Stabilization Loop},
+title = {{Research on the cross-coupling of a two axes gimbal system with dynamic unbalance}},
+volume = {10},
+year = {2013}
+}
+@article{Battistel2010,
+abstract = {Stabilized platforms have been widely studied recently in different engineering areas, focusing on diverse applications. The main control objective concerns in isolating devices such as cameras, array of sensors, or weapons, from motion caused to their host platform or vehicle. This problem is usually solved combining a set of measures obtained by gyroscopic sensors and accelerometers, which provide complete and even redundant information of motion needed to compensation. In this paper, this problem is discussed in the context where only two gyro measures are available. Different sensor configuration are considered, as well as appearing restrictions to motion control due to this reduced number of sensors.},
+annote = {The authors use 2 gyros to provide only angular velocities about 2 axes. They also use 2 motor encoders.
+With these information, there is an estimation of the angular velocities of the base relative to the inertial frame, which is numerically},
+author = {Battistel, Andrei and Lizarralde, Fernando and Hsu, Liu},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Battistel, Lizarralde, Hsu - 2010 - Estabiliza{\c{c}}{\~{a}}o de Plataformas Inerciais Utilizando Apenas duas Medidas de Sensores Girosc{\'{o}}picos.pdf:pdf},
+journal = {CBA},
+keywords = {attitude control,inertially stabilized platforms},
+pages = {215--222},
+title = {{Estabiliza{\c{c}}{\~{a}}o de Plataformas Inerciais Utilizando Apenas duas Medidas de Sensores Girosc{\'{o}}picos}},
+year = {2010}
+}
+@article{Duindam2007,
+abstract = {Standard methods to model multibody systems are aimed at systems with$\backslash$nconfiguration spaces isomorphic to R". This limitation leads to singularities$\backslash$nand other artifacts in case the configuration space has a different$\backslash$ntopology, for example in the case of ball joints or a free-floating$\backslash$nmechanism. This paper discusses an extension of classical methods$\backslash$nto allow for a very general class of joints, including all joints$\backslash$nwith a Lie group structure as well as nonholonomic joints. The model$\backslash$nequations are derived using the Boltzmann-Hamel equations and have$\backslash$nvery similar structure and complexity as obtained using classical$\backslash$nmethods, but they do not suffer from singularities. Furthermore,$\backslash$nthe equations are explicit differential equations (both for holonomic$\backslash$nand nonholonomic joints) and can be directly implemented in simulation$\backslash$nsoftware.},
+author = {Duindam, V and Stramigioli, S},
+doi = {10.1109/IROS.2007.4399066},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Duindam, Stramigioli - 2007 - Lagrangian dynamics of open multibody systems with generalized holonomic and nonholonomic joints.pdf:pdf},
+isbn = {1424409128},
+journal = {Intelligent Robots and Systems, 2007. IROS 2007. IEEE/RSJ International Conference on},
+keywords = {Boltzmann equation,Lagrangian dynamics,Lie group structure,Lie groups,ball joints,differential equations,free-floating mechanism,generalized holonomic-nonholonomic joints,model equations,open multibody systems,robot dynamicsBoltzmann-Hamel equations},
+number = {1},
+pages = {3342--3347},
+title = {{Lagrangian dynamics of open multibody systems with generalized holonomic and nonholonomic joints}},
+volume = {{\~{}}},
+year = {2007}
+}
+@phdthesis{Frangipani2013,
+abstract = {applicability for this approach.},
+annote = {First it is considered the 1 DOF case, putting the inertial device in the base, and then on the camera. The transfer function is calculated on both cases and it concludes that the transfer functions are similar. In the first case, the control should track the wave frequencies, while in the other case, it should reject them, which are seen as disturbances.
+Then shows the 2 DOF case (Pan/Tilt), but it just calculates the rotation between the inertial base and the camera. It is assumed that the 2 joints are decoupled.
+The DC motor transfer function (with reduction) is studied (for the 1 DOF case). In the end, some simplifications are done due to the fast time response of the motor and it becomes an integrator.
+A PI integer is proposed for the 1 DOF case. The transfer function to the reference is transformed to a second order transfer function with $\xi$ and $\omega$n. The gains are chosen so that frequencies up to 5Hz have near 0dB of attenuation, while higher frequencies are filtered (dual case for the INS on the camera).
+The implementation (Chapter 4) is not important, besides "Par{\^{a}}metros de configura{\c{c}}{\~{a}}o do sensor inercial" (could be useful, and the fact that it was implemented with Pan/Tilt. The motors operate at 1KHz.
+The results showed that the algorithm was not working well with the gain, so it was cut in half (trying to eliminate noise with higher frequencies). So it ended up working.
+The camera was used to detect the red point, but that is not important for us.
+Conclusion/Future: Drift on IMU was slow so it could be fixed by an operator. No filters implemented for the IMU. Discretization not done.
+Question: He showed the control for the 1 DOF case, but he implemented the 2 DOF case, and he controlled it  with 2 uncoupled systems (Pan controlled separated from Tilt).},
+author = {Frangipani, V.},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Frangipani - 2013 - Estabiliza{\c{c}}{\~{a}}o Inercial De C{\^{a}}mera Pan-Tilt De Um Rov.pdf:pdf},
+keywords = {jitter,tracking},
+school = {Federal University of Rio de Janeiro/COPPE},
+title = {{Estabiliza{\c{c}}{\~{a}}o Inercial De C{\^{a}}mera Pan-Tilt De Um Rov}},
+year = {2013}
+}
+@article{From2011,
+annote = {MPC is used to predict the ship motion and use it in the manipulator control.},
+author = {From, P{\aa}l J and Gravdahl, Jan T and Lillehagen, Tommy and Abbeel, Pieter},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/From et al. - 2011 - Motion Planning and Control of Robotic Manipulators on Seaborne Platforms.pdf:pdf},
+journal = {Control Engineering Practice},
+keywords = {marine systems,predictive control,robotics,stochastic systems},
+title = {{Motion Planning and Control of Robotic Manipulators on Seaborne Platforms}},
+year = {2011}
+}
+@article{From2012_Part1,
+author = {From, P{\aa}l Johan},
+doi = {10.4173/mic.2012.2.2},
+issn = {0332-7353},
+journal = {Modeling, Identification and Control},
+keywords = {implementation,lagrangian mechanics,lie theory,singularities},
+number = {2},
+pages = {45--60},
+title = {{An Explicit Formulation of Singularity-Free Dynamic Equations of Mechanical Systems in Lagrangian Form - Part one: Single Rigid Bodies}},
+volume = {33},
+year = {2012}
+}
+
+@article{From2012_Part2,
+author = {From, P{\aa}l Johan},
+doi = {10.4173/mic.2012.2.3},
+issn = {0332-7353},
+journal = {Modeling, Identification and Control},
+keywords = {implementation,lagrangian mechanics,lie theory,singularities},
+number = {2},
+pages = {61--68},
+title = {{An Explicit Formulation of Singularity-Free Dynamic Equations of Mechanical Systems in Lagrangian Form - Part two: Multibody Systems}},
+volume = {33},
+year = {2012}
+}
+
+@inproceedings{From2009,
+  title={Modeling and motion planning for mechanisms on a non-inertial base},
+  author={From, Pal J and Duindam, Vincent and Gravdahl, Jan T and Sastry, Shankar},
+  booktitle={IEEE Int. Conf. on Robotics and Automation},
+  pages={3320--3326},
+  year={2009},
+}
+
+@book{Gravdahl2014,
+  title={Vehicle-manipulator systems},
+  author={From, P{\aa}l Johan and Gravdahl, Jan Tommy and Pettersen, Kristin Ytterstad},
+  year={2014},
+  publisher={Springer}
+}
+
+@article{Hilkert2008,
+abstract = {We introduced some of the basic principles, techniques, and key design issues common to ISPs used in many diverse scientific, military, and commercial applications, and we touched on some of the less intuitive effects that must be dealt with. Many of these effects can influence the initial configuration of the system as well as design details later in the design process. The successful design of an ISP usually requires a multidisciplinary design team. The design of an ISP must often be closely coordinated with that of other major subsystems such as the primary sensor and the optics. The role of the systems engineer in the design process is perhaps the most critical because other members of the team may not be aware of the consequences of many of the effects discussed above. Inertially stabilized platforms (ISPs) are used to stabilize and point a broad array of sensors, cameras, telescopes, and weapon systems.},
+annote = {The author cites some general requirements of stabilization, gives basic principles and formulations of the stabilization problem, and points several possible sources of disturbances in the system (non-modeled structural dynamics, sensor misalignments, friction, imbalance, vibration of the carrier, wire torques, sensor noise,...).
+A special attention is given to the closed-loop bandwidth.
+The most common model and control loop is to have a high-bandwidht vel. loop for disturbance rejection and LOS control inside a lower bandwidth pos. loop for tracking. Commonly, PI controls are used, but disturbance rejection can be improved with more sophisticated techniques (state variable feedback, adaptive control, robust, fuzzy, disturbance observers, LQR, LQG, sliding mode, Hinf, ...).
+When the IMU is mounted on the base, they call the control scheme as a "feedforward technique".
+Nice comments about the ISP main components (gyros, bearings, motors, encoders/resolvers, ...). Direct drive motors may be nice! We should search about them.},
+author = {Hilkert, J. M.},
+journal = {IEEE Control Systems Magazine},
+number = {1},
+pages = {26--46},
+title = {{Inertially stabilized platform technology: Concepts and principles}},
+volume = {28},
+year = {2008}
+}
+@article{Ji2009,
+abstract = {A dual speed loop cascade control structure using the DC tachometer motor to constitute the inner speed loop, and using the rate gyro to constitute the outer stabilized loop is presented since there is shortcome in single speed loop servo control composed of rate gyro for LOS stabilization in opto-electronic tracking platform system. The functions of reducing inner friction disturbance and bating carrier turbulence are designed respectively. The aspects of the system performance and robustness are analyzed and compared with single speed loop control structure in detail. The inner speed loop adopts PI tuner to overcome the influence of nonlinearities caused by friction and mechanical resonances and a time optimal self-tuning PID control algorithm is developed to bate the carrier disturbance in outer stabilized loop. The proposed control structure and scheme based on DSP have been realized in a four-axis opto-electronic stabilized tracking platform. Experimental results can achieve higher stabilized precision and perfect control performance. The proposed control structure and method is effective and practicable in real practical applications.},
+author = {Ji, Wei and Li, Qi and Xu, Bo and Tu, Jun Jun and Zhao, De An},
+doi = {10.1109/ICINFA.2009.5205070},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Ji et al. - 2009 - Cascade servo control for LOS stabilization of opto-electronic tracking platform-design and self-tuning.pdf:pdf},
+isbn = {9781424436088},
+journal = {2009 IEEE International Conference on Information and Automation, ICIA 2009},
+pages = {1034--1039},
+title = {{Cascade servo control for LOS stabilization of opto-electronic tracking platform-design and self-tuning}},
+year = {2009}
+}
+@article{Kennedy2003,
+abstract = {Two methods are analyzed for inertially stabilizing the pointing vector defining the line of sight (LOS) of a two-axis gimbaled laser tracker. Mounting the angular rate and acceleration sensors directly on the LOS axes is often used for precision pointing applications. This configuration impacts gimbal size, and the sensors must be capable of withstanding high angular slew rates. With the other stabilization method, sensors are mounted on the gimbal base, which alleviates some issues with the direct approach but may be less efficient, since disturbances are not measured in the LOS coordinate frame. This paper investigates the impact of LOS disturbances and sensor noise on the performance of each stabilization control loop configuration. It provides a detailed analysis of the mechanisms by which disturbances are coupled to the LOS track vector for each approach, and describes the advantages and disadvantages of each. It concludes with a performance comparison based upon simulated sensor noise and three sets of platform disturbance inputs ranging from mild to harsh disturbance environments.},
+author = {Kennedy, Peter J. and Kennedy, Rhonda L.},
+doi = {10.1109/TCST.2002.806443},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Kennedy, Kennedy - 2003 - Direct versus indirect line of sight (LOS) stabilization.pdf:pdf},
+isbn = {1063-6536},
+issn = {10636536},
+journal = {IEEE Transactions on Control Systems Technology},
+keywords = {Angular rate sensor,Gimbal,Rate gyro,Stabilization},
+number = {1},
+pages = {3--15},
+title = {{Direct versus indirect line of sight (LOS) stabilization}},
+volume = {11},
+year = {2003}
+}
+@book{Kennedy2014,
+annote = {The book covers a deep study about LOS stabilization: components specification, basic rigid body dynamics, design procedures, examples, ...
+They use a simplified model for the dynamics and the control: decoupled gimbals, PI control, kinematics relation btw base motion and gimbal motion, ...
+To design the control loop (bandwidth, Kp and Ki gains, ...) and the electromechanical components, they use a spectral analysis using several assumptions and carteations.
+Basically, they calculate the contributions of each torque disturbance as an accel. RMS and use formulas and considerations using these values to estimate the control loop BW according to jitter requirements. To specify the motors, they add to the accel. RMS disturbance value, the max slew accel. This value will determine the motor peak torque by multiplying the inertia.
+An error budget of each torque disturbance source is mysteriously calculated and checked if the sum attends to the jitter requirement. The encoders/resolvers are specified according to the IFOV: its accuracy should be the order of IFOV.
+The gyros are specified by analazying the ARW with the control loop bandwidth. Other parameters are also considered: bias stability, nonlinear scale factor, ...},
+author = {Kennedy, Peter J and Kennedy, Rhonda},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Kennedy, Kennedy - 2014 - Stabilizing the Line of Sight(2).pdf:pdf},
+pages = {210},
+title = {{Stabilizing the Line of Sight}},
+year = {2014}
+}
+@article{Khodadadi2011,
+abstract = {This paper presents an uncertain linear model for an Inertial Stabilization Platform (ISP). The system has a 2 degree of freedom (DOF) gimbal which will be attached to a moving vehicle and the optical sensors mounted on stabilized gimbal. The main purpose of an ISP is to eliminate the various disturbance and body motion to make the line of sight (LOS), hold steady in an inertial space. Due to dynamical model of the 2-DOF gimbal, friction, cable restraint, noise, other disturbances from the outside environment and the motions of the vehicle's body (as a result of maneuvering or vibration), the pointing and tracking accuracy of the gimbaled system may strongly degrade. These disturbances are typically nonlinear. Modeling and controlling the stabilization loop with these nonlinearities are the main problem. The approach of this paper is considering a linear doubted model. Linearity makes the model simple and so linear classic controller can be used to meeting design requirements. Therefore the cost of the design and implementation stages will decrease. In addition uncertainty makes the model practical and so the nonlinear nature of mentioned disturbance can be interpreted by this model. So this built ISP by a PI controller which is capable enough to overcome the disturbances and to meet the implication requirements will be controlled. For decreasing the effect of these uncertainties and other probable variation in ISP's parameters on system performance, a determined simple structure for robust enhancer compensator is used and designed.},
+author = {Khodadadi, Hamed and Motlagh, Mohammad Reza Jahed and Gorji, Mohammad},
+doi = {10.1109/INECCE.2011.5953880},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Khodadadi, Motlagh, Gorji - 2011 - Robust control and modeling a 2-DOF inertial stabilized platform.pdf:pdf},
+isbn = {9781612842288},
+journal = {InECCE 2011 - International Conference on Electrical, Control and Computer Engineering},
+keywords = {ISP,LOS,gimbal,nonlinearity,stabilization loop,uncertainty},
+pages = {223--228},
+title = {{Robust control and modeling a 2-DOF inertial stabilized platform}},
+year = {2011}
+}
+@article{Masten2008,
+  title={Inertially stabilized platforms for optical imaging systems},
+  author={Masten, Michael K},
+  journal={IEEE Control Systems Magazine},
+  volume={28},
+  number={1},
+  pages={47--64},
+  year={2008},
+  publisher={IEEE}
+}
+@article{Poincare1901,
+author = {Poincare, Henri},
+file = {:F$\backslash$:/Dropbox/Mestrado/HEADS/Pesquisa/Sur une forme nouvelle des {\'{e}}quations de la m{\'{e}}canique - Poincare, 1901.pdf:pdf},
+journal = {Comptes Rendus de l'Acad{\'{e}}mie des Sciences},
+number = {3},
+pages = {369--371},
+title = {{Sur une forme nouvelle des {\'{e}}quations de la m{\'{e}}chanique}},
+volume = {132},
+year = {1901}
+}
+@article{Wang2008,
+abstract = {This article provides an overview of the technical challenges and solutions for ISP designers for strategic inertial navigation systems (INSs). The design descriptions herein are mostly generic, with occasional references to existing or past strategic systems. The article discusses four primary topics, namely, system design options, environments and mitigation techniques, preflight calibration and alignment (C{\&}A) in-flight navigation mechanizations, and test and verification. IEEE standard terminology of inertial sensors and inertial systems is used throughout the article. The best-known application of ISPs is stabilization and control of payloads such as electro-optical sensors and laser beams. Perhaps less well known is that ISPs are used in a variety of aircraft and missile navigation systems. With the introduction of digital computers, the breadth of application of ISPs for navigation began to diminish, and strapdown INS became prevalent. This trend has accelerated with the navigation aiding of the global positioning system (GPS), which can render a strapdown inertial measurement unit (IMU) more accurate than the best ISPs. Today, only self-contained precision navigation systems use ISPs. Strategic navigation systems are among this small group.},
+author = {Wang, Hanching Grant and Williams, Thomas C.},
+journal = {IEEE Control Systems Magazine},
+number = {1},
+pages = {65--85},
+title = {{Strategic inertial navigation systems: high-accuracy inertially stabilized platforms for hostile environments}},
+volume = {28},
+year = {2008}
+}
+@article{Ekstrand2001,
+abstract = {Equations of motion for the two-axes yaw-pitch gimbal configuration are discussed on the assumption that the gimbals are rigid bodies and have no mass unbalance. The equations are derived and different terms are brought together into separate groups for the sake of clarity and to facilitate certain interpretations. Different kinds of disturbances and their elimination or reduction are discussed, as is the yaw gain dependence on the pitch angle. Inertia cross couplings are also given. The purpose is twofold: to simplify the picture of the two-axes gimbals and to further illustrate the properties of this configuration.},
+author = {Ekstrand, Bertil},
+doi = {10.1109/7.953259},
+file = {:C$\backslash$:/Users/Avell/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Ekstrand - 2001 - Equations of motion for a two-axes gimbal system.pdf:pdf},
+issn = {00189251},
+journal = {IEEE Transactions on Aerospace and Electronic Systems},
+number = {3},
+pages = {1083--1091}
+}
+@article{Sadraei2013,
+author = {Sadraei, Ehsan and Moghaddam, Majid M.},
+doi = {10.1109/ICRoM.2013.6510099},
+file = {:C$\backslash$:/Users/Avell/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Sadraei, Moghaddam - 2013 - On a moving base robotic manipulator dynamics.pdf:pdf},
+isbn = {9781467358118},
+journal = {International Conference on Robotics and Mechatronics, ICRoM 2013},
+keywords = {Robot manipulator,base motion,dynamics},
+number = {3},
+pages = {165--170},
+title = {{On a moving base robotic manipulator dynamics}},
+volume = {4},
+year = {2013}
+}
+@article{Sadraei2015,
+author="Sadraei, Ehsan
+and Moghaddam, Majid M.",
+title="On a Moving Base Robotic Manipulator Dynamics",
+journal="International Journal of Robotics, Theory and Applications",
+year="2015",
+volume="4",
+number="3",
+pages="66--74",
+abstract="There are many occasions where the base of a robotic manipulator is attached to a moving platform, such as on a moving ship, terrain or space shuttle. In this paper a dynamic model of a robotic manipulator mounted on a moving base is derived using both Newton-Euler and Lagrange-Euler methods. The presented models are simulated for a Mitsubishi PA10-6CE robotic manipulator characteristics mounted on a ship platform that is moving on ocean and the results are verified through both methods. In this simulation it is assumed that the inertia of the base of the robot is large enough and is not affected by the manipulator motion. However, the motion of the ship directly influences the dynamics of the manipulator in movements. Results and computation time of the two methods are compared and it is shown that the Newton-Euler method needs less computation time than the Lagrange method.",
+issn="2008-7144",
+doi=""
+}
+@article{Hurak2012,
+abstract = {This paper describes a novel image-based pointing-tracking feedback control scheme for an inertially stabilized double-gimbal airborne camera platform combined with a computer vision system. The key idea is to enhance the intuitive decoupled controller structure with measurements of the camera inertial angular rate around its optical axis. The resulting controller can also compensate for the apparent translation between the camera and the observed object, but then the velocity of this mutual translation must be measured or estimated. Even though the proposed controller is more robust against longer sampling periods of the computer-vision system then the decoupled controller, a sketch of a simple compensation of this delay is also given. Numerical simulations are accompanied by laboratory experiments with a real benchmark system.},
+author = {Hur{\'{a}}k, Zden{\v{e}}k and {\v{R}}ez{\'{a}}{\v{c}}, Martin},
+doi = {10.1109/TCST.2011.2164541},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Hur{\'{a}}k, Řez{\'{a}}{\v{c}} - 2012 - Image-based pointing and tracking for inertially stabilized airborne camera platform.pdf:pdf},
+isbn = {9780819481603},
+issn = {10636536},
+journal = {IEEE Transactions on Control Systems Technology},
+keywords = {Image-based visual servoing,inertial stabilization,line-of-sight stabilization},
+number = {5},
+pages = {1146--1159},
+title = {{Image-based pointing and tracking for inertially stabilized airborne camera platform}},
+volume = {20},
+year = {2012}
+}
+@book{Murray1994,
+author = {Murray, Richard M. and Sastry, S. Shankar and Zexiang, Li},
+title = {A  Mathematical Introduction to Robotic Manipulation},
+year = {1994},
+isbn = {0849379814},
+edition = {1st},
+publisher = {CRC Press, Inc.},
+}
+@book{Siciliano2009,
+title = "Robotics : Modelling, Planning and Control",
+author = "Siciliano, Bruno and Sciavicco, Lorenzo and Villani, Luigi",
+series = "Advanced Textbooks in Control and Signal Processing",
+publisher = "Springer",
+address = "London",
+url = "http://opac.inria.fr/record=b1129198",
+isbn = "1-8462-8641-7",
+note = "013-81159",
+year = 2009
+}
+@article{Silver1982,
+author = {William M. Silver},
+title = {On the Equivalence of Lagrangian and Newton-Euler Dynamics for Manipulators},
+journal = {The International Journal of Robotics Research},
+volume = {1},
+number = {2},
+pages = {60-70},
+year = {1982},
+doi = {10.1177/027836498200100204},
+abstract = {Recently, there has been considerable interest in efficient formulations of manipulator dynamics. The inefficiency of the classic Lagrangian formulation is well known, leading several researchers to a new formulation based on the Newton-Euler equations. This formulation is highly ef ficient, but there may be some confusion as to the source of this efficiency. This paper shows that there is in fact no fundamental difference in computational efficiency between Lagrangian and Newton-Euler formulations. The efficiency of the above-mentioned Newton-Euler formula tion is due to two factors: the recursive structure of the computation and the representation chosen for the rota tional dynamics. Both of these factors can be achieved in a Lagrangian formulation. Recursive Lagrangian dy namics has been discussed previously by Hollerbach. This paper compares the representations that have been used and shows that with a proper choice the Lagrangian formulation is indeed equivalent to the Newton-Euler formulation.}
+}
+@article{Rezac2011,
+abstract = {The paper documents a computational design and an experimental verification of a vibration rejection scheme for an inertially stabilized platform mounted on a mobile base. The mechanical configuration of the platform is that of a standard double gimbal, which realizes a mass stabilization of the line of sight of an optoelectronic payload such as a camera an/or laser ranger finder. Nonideal static balancing of the payload gives rise to projection of the carrier vibrations onto a disturbing torque acting on the payload around the joint axes. This disturbance can be left for the existing inertial angular rate feedback to attenuate but a better solution can be devised. The cause of this disturbing torque {\&}{\#}x2014; the linear acceleration of the carrier {\&}{\#}x2014; can be measured, filtered and fed forward to the two direct drive motors. Experiments prove that significant vibration rejection is achieved with this feedforward compensation scheme.},
+author = {{\v{R}}ez{\'{a}}{\v{c}}, Martin and Hur{\'{a}}k, Zden{\v{e}}k},
+doi = {10.1109/CCA.2011.6044442},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Řez{\'{a}}{\v{c}}, Hur{\'{a}}k - 2011 - Vibration rejection for inertially stabilized double gimbal platform using acceleration feedforward.pdf:pdf},
+isbn = {9781457710629},
+issn = {1085-1992},
+journal = {Proceedings of the IEEE Int. Conf. on Control Applications},
+pages = {363--368},
+title = {{Vibration rejection for inertially stabilized double gimbal platform using acceleration feedforward}},
+year = {2011}
+}
+@phdthesis{Rezac2013,
+abstract = {This thesis addresses a few technical problems that are all related to the central topic of inertial stabilization of the optical axis of an airborne camera system (so-called line-of-sight stabilization). First, the task of augmentation of the classical inertial stabilization loop with an automatic visual tracking loop is solved in a systematic way invoking the concepts from the young discipline of visual servoing. Second, the issue of computer-vision-induced delays was tackled and an intuitive engineering solution was formulated as a special instance of a reset control, a modified Smith predictor and a multirate control, which allowed to propose more efficient solutions. Third, the advanced mechanical configuration with two motors ac- tuating the rotation of the optical payload around a common axis (so-called dual-stage con- figuration) was studied and recent numerical optimization tools for structured H∞-optimal controller design were used to provide controllers with a performance superior to the one obtained with classically tuned PID loops. Definition and selection of these research topics were motivated by a collaboration with an industrial partner within a series of projects. Therefore the thesis also documents a few routine engineering results for completeness. Namely, mathematical modeling of the kinematics and dynamics of common mechanical configurations such as double-gimbal and dual-stage configurations, inertial estimation, de- sign of a feedforward disturbance rejection controller and input command shaping filters. All the algorithms were always implemented in one of the available benchmark systems and tested either in a laboratory or even during helicopter flights},
+author = {{\v{R}}ez{\'{a}}{\v{c}}, Martin},
+file = {:C$\backslash$:/Users/CaipirUltron/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Rezac - 2013 - Inertial stabilization, estimation and visual servoing for aerial surveillance.pdf:pdf},
+number = {October 2013},
+pages = {169},
+title = {{Inertial stabilization, estimation and visual servoing for aerial surveillance}},
+year = {2013}
+}
+@inproceedings{skjelten2011ship,
+title={Ship Based Oil Spill Monitoring: A New Integrated System for Thickness Evaluation and Operational Overview},
+author={Skjelten, H and Gutvik, CR and Solberg, LA},
+booktitle={International Oil Spill Conference Proceedings (IOSC)},
+volume={2011},
+number={1},
+year={2011},
+organization={American Petroleum Institute}
+}
+
+@article{Konigseder2016,
+author = {Konigseder, F. and Kemmetmuller, W. and Kugi, A.},
+file = {:home/alexfneves/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Konigseder, Kemmetmuller, Kugi - 2016 - Attitude Estimation Using Redundant Inertial Measurement Units for the Control of a Camera Stabi.pdf:pdf},
+journal = {IEEE Transactions on Control Systems Technology},
+keywords = {Attitude estimation,camera stabilization,sensor fusion},
+number = {5},
+pages = {1--8},
+title = {{Attitude Estimation Using Redundant Inertial Measurement Units for the Control of a Camera Stabilization Platform}},
+volume = {24},
+year = {2016}
+}
+
+@article{Walrath1984,
+abstract = {Gimbal bearing friction is a major source of stabilization errors for airborne pointing and tracking systems. This paper describes a novel addition to conventional stabilization techniques which has recently been incorporated in such a system to greatly improve stabilization performance. This addition contains a model in system software which predicts realtime friction torque values. This new, dynamic friction model, which is the result of recent investigations into dynamic friction characteristics, is adaptively adjusted into agreement with actual friction behavior by processing inputs from conventional system sensors. Measurements from these sensors cause on-line adjustment of model parameters, resulting in 'adaptive' compensator action. The model's output is used to generate an addition to conventional stabilization subsystem commands. The resulting additional gimbal motor torque is equal and opposed to the actual friction disturbance such that the residual torque, and hence stabilization errors, are a small fraction of those for an uncompensated system. The model-referenced compensator thus operates in a predictive, adaptive, feedforward manner to pre-condition the stabilization subsystem, reducing stabilization errors well below levels which are achievable through conventional feedback operation alone. ?? 1984.},
+author = {Walrath, Craig D.},
+doi = {10.1016/0005-1098(84)90081-5},
+file = {:home/alexfneves/.local/share/data/Mendeley Ltd./Mendeley Desktop/Downloaded/Walrath - 1984 - Adaptive bearing friction compensation based on recent knowledge of dynamic friction.pdf:pdf},
+issn = {00051098},
+journal = {Automatica},
+keywords = {Friction dynamics,adaptive control,feedback control,feedforward,friction model,microprocessor control,predictive control},
+number = {6},
+pages = {717--727},
+title = {{Adaptive bearing friction compensation based on recent knowledge of dynamic friction}},
+volume = {20},
+year = {1984}
+}
+
+@inproceedings{Hurak2009,
+  title={Combined line-of-sight inertial stabilization and visual tracking: application to an airborne camera platform},
+  author={Hur{\'a}k, Zden{\v{e}}k and {\v{R}}ez{\'a}{\v{c}}, Martin},
+  booktitle={Proceedings of the IEEE Conference on Decision and Control.},
+  pages={8458--8463},
+  year={2009},
+}
+
+@article{Debruin2008,
+abstract = {Mobile VSAT satcom antenna systems are available on the market today but are just in their infancy. All observers of the satellite industry see great growth potential for this market. Press releases announcing a new product offering are now common, and an Internet search for "satcom on-the-move" produces tens of thousands of hits. Already one can find examples of delayed or failed products that suffered from poor control system performance. As discussed herein, a basic understanding of apertures and their performance is needed by the control system designer, to the same extent an appreciation of servo issues is needed by the antenna company product manager in possession of a suitable aperture. Clearly, a system engineering approach with careful tradeoffs of size, weight, power, radio-frequency, and control system issues should be undertaken before press releases are issued.},
+author = {Debruin, J},
+journal = {Control Systems, IEEE},
+number = {1},
+pages = {86--101},
+title = {{Control systems for mobile satcom antennas}},
+volume = {28},
+year = {2008}
+}
+
+@article{Kazemy2007,
+author = {Kazemy, Ali and Hosseini, Seyed Amin and Farrokhi, Mohammad},
+doi = {10.1109/MED.2007.4433935},
+file = {:home/alexfneves/Downloads/04433935.pdf:pdf},
+isbn = {142441282X},
+journal = {Mediterranean Conference on Control and Automation},
+title = {{Target-based line-of-sight stabilization in periscopes}},
+year = {2007}
+}
+
+@inproceedings{Reis2018,
+  title={Dynamic Model and Line of Sight Control of a 3-DOF Inertial Stabilization Platform},
+  author={Reis, Matheus and Guilherme Pires Sales Carvalho and Alex Fernandes Neves and Alessandro Jacoud Peixoto},
+  booktitle={Proceedings of the IEEE American Control Conference},
+  year={2018},
+}
+
+@article{Wu2012closed,
+  title={Closed-loop dynamic parameter identification of robot manipulators using modified Fourier series},
+  author={Wu, Wenxiang and Zhu, Shiqiang and Wang, Xuanyin and Liu, Huashan},
+  journal={International Journal of Advanced Robotic Systems},
+  volume={9},
+  number={1},
+  pages={29},
+  year={2012},
+  publisher={SAGE Publications Sage UK: London, England}
+}
+
+@article{Calanca2011mimo,
+  title={MIMO closed loop identification of an industrial robot},
+  author={Calanca, Andrea and Capisani, Luca M and Ferrara, Antonella and Magnani, Lorenza},
+  journal={IEEE Transactions on Control Systems Technology},
+  volume={19},
+  number={5},
+  pages={1214--1224},
+  year={2011},
+  publisher={IEEE}
+}
+
+@article{Swevers2007dynamic,
+  title={Dynamic model identification for industrial robots},
+  author={Swevers, Jan and Verdonck, Walter and De Schutter, Joris},
+  journal={IEEE Control Systems},
+  volume={27},
+  number={5},
+  pages={58--71},
+  year={2007},
+  publisher={IEEE}
+}
+
+@inproceedings{Fontanelli2017modelling,
+  title={Modelling and identification of the da Vinci research kit robotic arms},
+  author={Fontanelli, GA and Ficuciello, F and Villani, L and Siciliano, B},
+  booktitle={2017 IEEE/RSJ International Conference on Intelligent Robots and Systems},
+  year={2017}
+}
+@inproceedings{watanabe2015rock,
+  title={The rock-gazebo integration and a real-time AUV simulation},
+  author={Watanabe, Thomio and Neves, Gustavo and Cerqueira, R{\^o}mulo and Trocoli, Tiago and Reis, Marco and Joyeux, Sylvain and Albiez, Jan},
+  booktitle={Robotics Symposium (LARS) and 2015 3rd Brazilian Symposium on Robotics (LARS-SBR), 2015 12th Latin American},
+  pages={132--138},
+  year={2015},
+  organization={IEEE}
+}

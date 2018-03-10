@@ -1,0 +1,53 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusão}
+
+%This work shows that a computed torque controller for stabilization with a PID for LOS tracking is robust to parameter uncertainties and unmodeled dynamics.
+%
+Neste trabalho, mostramos que um controlador por torque computado para estabilização combinado 
+a um simples PID para o rastreamento do LOS é robusto a incertezas paramétricas e dinâmicas.
+%
+%Ideally, the proposed controller guarantees exponential stability.
+%
+Idealmente, o controlador proposto garante estabilidade assintótica.
+%
+%In practice, however, the error amplitude is bounded by a small residual set which is 
+%linear in the parametric error.
+%
+Entretanto, na prática, a amplitude do erro é limitada à um pequeno conjunto residual, 
+cuja norma cresce linearmente com o erro paramétrico.
+%
+%Simulation results showed that the RPY errors are bounded by the order of $0.2^\circ$ 
+%for the given vessel motion, even in the presence of 20\% of dynamic parameter uncertainty.
+%
+Resultados de simulação mostram que os erros em ângulos de RPY são limitados a um conjunto 
+da ordem de $0.2^\circ$, mesmo sob 20\% de erro nos parâmetros dinâmicos.
+
+%As evidenced by equation~\eqref{eq:ref_RPY}, the LOS computation from a given target 
+%position is influenced by the ISP geometric parameters, specially by the joint axes vectors.
+%
+Como mostrado em~\eqref{eq:ref_RPY}, o cálculo da linha de visada é influenciado pelos parâmetros 
+geométricos da ISP, especialmente pelos vetores de eixo das juntas.
+%
+%Since this uncertainty changes the nominal trajectory, it cannot be compensated
+%via feedback control.
+%
+Já que esta incerteza muda a trajetória nominal, a mesma não pode ser compensada através do controle.
+%
+%To mitigate this problem, an identification algorithm was proposed.
+%
+Para reduzir este problema, um simples algoritmo de identificação foi proposto, baseado apenas nas propriedades geométricas da ISP.
+%
+%The algorithm is simple and does not rely on optimal trajectory generation, but
+%on geometric properties of the ISP.
+%
+%Simulation results show that, even after adding an unbiased white noise with
+%$1^\circ$ standard deviation for the RPY measurements, this
+%algorithm is able to identify the axes vectors with an error of $0.01^\circ$.
+%
+Os resultados das simulações mostram que, após a adição de ruído branco com $1^\circ$ de desvio padrão 
+para as medidas de orientação da câmera, este algoritmo foi capaz de identificar os vetores de eixo com um erro de $0.01^\circ$.
+
+%The simulations were performed in the Gazebo with a customized visualization interface based on Unity. The control was implemented under the real-time software provided by the Rock framework, already envisioning the application of the proposed solutions on a practical ISP implementation.
+
+As simulações foram feitas no ambiente Gazebo com uma interface para visualização baseada em Unity. 
+O algoritmo de controle foi implementado utilizando o software de tempo real Rock Robotics, já visando aplicar as soluções propostas em um sistema real.

@@ -1,0 +1,40 @@
+\usepackage[latin1]{inputenc}
+%\usepackage[brazil]{babel}
+%\usepackage[T1]{fontenc}
+\usepackage{ae}
+
+\makeatletter
+\def\verbatim@font{\normalfont\ttfamily\footnotesize}
+\makeatother
+
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath}
+\usepackage{amssymb}  % assumes amsmath package installed
+%\let\proof\relax
+%\let\endproof\relax
+%\usepackage{amsthm}
+\usepackage{color}
+%\usepackage{mathtools}
+\usepackage{tabularx} %used to chose the widht of tables
+\usepackage{multirow}
+\usepackage{epstopdf}
+\let\labelindent\relax
+\usepackage[inline]{enumitem}
+
+\newtheorem{remark}{Comentário}
+\theoremstyle{plain}
+\newtheorem{definition}{Definição}
+\newtheorem{teorema}{Teorema}
+\newtheorem{algorithm}{Algoritmo}
+\newcommand{\sref}[1]{Seção~\ref{#1}}
+\newcommand{\fref}[1]{Fig.~\ref{#1}}
+\newcommand{\tref}[1]{Tabela~\ref{#1}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\aref}[1]{Suposição~\ref{#1}}
+\newcommand{\algref}[1]{\textbf{Algoritmo~\ref{#1}}}
+%\renewcommand{\qedsymbol}{}
+\newcommand{\rev}[1]{{\color{red}#1}}
+\newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}

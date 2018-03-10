@@ -1,0 +1,929 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Modelagem}
+\label{sec:modeling}
+
+%In this section, a procedure to derive the kinematic and dynamic models of an ISP fixed on a mobile base is given. 
+%
+%Nesta seção, apresentamos o procedimento de cálculo do modelo cinemático e dinâmico de uma ISP fixa em uma base móvel.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Notação e Convenções}
+\label{sec:definitions}
+
+%This section presents the notations and definitions used in this work. Let $\mathbb{N}_0 = \{0,1,2,\dots\}$ and define $\mathbb{\bar{N}}_1 = \{ \bar{1}\,, \bar{2}\,, \hdots \}$. Unless otherwise stated, $i, j, k \in \mathbb{N}_0 \cup \mathbb{\bar{N}}_1 \cup \{\bar{b},b,s,c\}$.
+%
+Esta seção introduz notações e definições utilizadas neste trabalho. Sejam os conjuntos $\mathbb{N}_0 = \{0,1,2,\dots\}$ e $\mathbb{\bar{N}}_1 = \{ \bar{1}\,, \bar{2}\,, \hdots \}$. A menos que seja dito o contrário,
+$i, j, k \in \mathbb{N}_0 \cup \mathbb{\bar{N}}_1 \cup \{\bar{b},b,s,c\}$.
+%
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=.95\columnwidth]{figs/ship_conventions.pdf}
+    \caption{Convenções para os sistemas de referência da ISP de três eixos.}
+    \label{fig:HEADS_convention}
+\end{figure}
+
+%Considering \fref{fig:HEADS_convention}, define the following:
+Considerando a \fref{fig:HEADS_convention}, defina o seguinte:
+%
+\begin{itemize}
+\item $\mathbf{E}_{0}$: sistema inercial de referência;
+%\item $\mathbf{E}_{s}$: INS frame, placed anywhere on the vehicle or on the last link for the indirect and direct stabilization configurations, respectively;
+\item $\mathbf{E}_{\bar{i}}$: fixo no corpo $i$ com origem em seu centro de gravidade (CG) ($i \in \mathbb{N}_1 \cup \{b\}$);
+\item $\mathbf{E}_{i}$: fixo no corpo $i$ com origem no eixo da $i$-nésima junta $(i \in \mathbb{N}_1)$;
+\item $\mathbf{E}_{s}$: fixo na INS em configuração indireta;
+\item $\mathbf{E}_{b}$: fixo no veículo ($\mathbf{E}_{b} \equiv \mathbf{E}_{s}$);
+%We consider $\mathbf{E}_b \equiv \mathbf{E}_s$ (or $\mathbf{E}_b$ located on $\mathbf{E}_1$) for the indirect (or direct) configuration;
+\item $\mathbf{E}_{c}$: fixo na câmera, no último elo;
+%\item $\mathbf{E}_{t}$: fixed on the target georeferenced position;
+\item $R_{ij} \in SO(3)$: matriz de rotação descrevendo a orientação de $\mathbf{E}_j$ em relação à $\mathbf{E}_i$;
+%Of course, $R_{i,i} = I_{3}$, where $I_{3} \in \mathbb{R}^{3 \times 3}$ is the identity matrix;
+%
+\item $x^k_i\,,y^k_i\,,z^k_i \in \mathbb{R}^{3}$: vetores da base canônica de $\mathbf{E}_i$, escritos em $\mathbf{E}_k$;
+%
+%\item $p_{0i} \in \mathbb{R}^{3}$: inertial position of the origin of frame $\mathbf{E}_i$;
+%
+\item $p^{k}_{ij} \in \mathbb{R}^{3}$: vetor de posição da origem de $\mathbf{E}_i$ até a origem de $\mathbf{E}_{j}$, representado em $\mathbf{E}_k$;
+%We use $r=p$ for position and $r=v$ for linear velocity, for example;
+%
+\item $v^{k}_{ij} \in \mathbb{R}^{3}$: velocidade linear de $\mathbf{E}_i$ em relação à $\mathbf{E}_{j}$, escrita em $\mathbf{E}_k$;
+%
+\item $\omega^{k}_{ij} \in \mathbb{R}^{3}$: velocidade angular de $\mathbf{E}_i$ em relação à $\mathbf{E}_{j}$, escrita em $\mathbf{E}_k$;
+%
+%\item $V^{k}_{ij} = [\, {v^{k}_{ij}}^{T} \,\,\, {\omega^{k}_{ij}}^{T} \,]^T \in \mathbb{R}^{6}$: velocity twist (linear and angular velocities) from $\mathbf{E}_i$ to  $\mathbf{E}_{j}$, written in $\mathbf{E}_k$;
+%
+\item $g_{ij} \in SE(3)$: transformação homogênea de $\mathbf{E}_j$ até $\mathbf{E}_i$;
+%depending on $R_{ij}$ and on the position vector $p^i_{ij}$;
+%
+\item $h^{j}_{i} \in \mathbb{R}^{3}$: vetor unitário definindo o eixo de rotação da $i$-nésima junta, representado em $\mathbf{E}_j$ ($i \in \mathbb{N}_1$);
+%
+%\item $\omega_i \in \mathbb{R}^{3}$: angular velocity of body $i$ seen and represented in the inertial frame 					 $\mathbf{E}_0$ ($i \in \mathbb{N}_1 \cup \{b\}$). Mathematically, $\omega_i$ is defined as the twist coordinates of the $so(3)$ 			 Lie algebra as $\hat{\omega}_i = \dot{R}_i R^{T}_{i}$;
+
+\item $m_i \in \mathbb{R} ,\, I^{i}_{i} \in \mathbb{R}^{3 \times 3}$: massa e tensor de inércia do corpo $i$ representado em $\mathbf{E}_{i}$ ($i \in \mathbb{N}_1 \cup \{b\}$);
+%
+%\item $\overline{I}^i_i =
+%\left[\begin{array}{cc}
+%\!\! m_i \, I_{3\times3} \!\!&\!\!  0 \!\! \\
+%\!\! 0 \!\!&\!\! I^i_i \!\!
+%\end{array}\right]$: augmented inertia matrix of body $i$;
+%of body $i$ written in $\mathbf{E}_{i} (i \in \mathbb{N}_1 \cup \{b\})$.
+%
+\item $\mathbf{S} : \mathbb{R}^3 \mapsto \mathrm{so}(3)$ operador do produto vetorial;
+%
+\item $\mathbf{I}_{n} \in \mathbb{R}^{n \times n}$: matriz identidade de dimensão $n$.
+%
+\end{itemize}
+%
+%\rev{Also, since the indirect stabilization approach is proposed, the INS frame is supposed to be $\mathbf{E}_{b}$}.
+%
+%Note that, by the definition of $\mathbf{E}_{i}$, $I^i_i$ is a constant matrix. If $\mathbf{E}_{i}$ is chosen to be aligned with the principal axis of inertia of rigid body $i$, $I^i_i$ is also diagonal.
+%Therefore, for simplicity, it is supposed that the principal moments of the inertia matrix of body $i$ are known.
+%%
+%Also, in the case of a 3-DOF ISP, we suppose that $\mathbf{E}_{e} \equiv \mathbf{E}_{3}$.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{ISP Modeling}
+%\label{sec:modeling}
+%
+%The \textit{kinematic} model of the ISP can be described by the three equations below:
+%%
+%\begin{align}
+%R_{oc}(\eta_{c_2}) &= R_{ob}(\eta_{b_2}) \, R_{bc}(q) \,, \nonumber \\
+%\omega^{c}_{0c} &= J^{B}_{bc}(q) \, \dot{q} + R^{\mathsf{T}}_{bc}(q)\,\omega^{b}_{0b} \,, \nonumber \\
+%\dot{\omega}^{c}_{0c} &= J^{B}_{bc}(q) \, \ddot{q} + \dot{J}^{B}_{bc}(q) \, \dot{q} + \dot{\omega}^{c}_{0b} \,.
+%\label{eq:outer_model}
+%\end{align}
+%
+%In this section, we summarize the mathematical framework for VMS proposed in \cite{Gravdahl2014}, applying it to find   the
+%dynamic model of a 3 DOF ISP.
+%
+%We consider only the case of manipulators with rotational joints, which is usual in ISPs.
+%
+%The section is organized as follows. First, we discuss the kinematics of VM systems. Second, the dynamic equations of motion    for a
+%general multibody system are presented. Lastly, the dynamic equations of a VM in $SE(3)$ are derived using the 	 previous formulation
+%and applied to the case of a 3 DOF ISP.
+%
+%The section is organized as follows: first, the kinematics of a vehicle-manipulator system is discussed. 		  Second, the ISP dynamic
+%equations of motion are derived using the framework of \cite{Gravdahl2014}. Finally, the system equations of motion are derived    by
+%means of the Newton-Euler formalism.
+%
+%In this work, if the superscript symbol is omitted, the vector is represented in the inertial frame, $\mathbf{E}_0$.
+%
+%If the superscript is omitted, the vector is written in $\mathbf{E}_0$.
+%
+Quando o super escrito é omitido em um vetor, o mesmo está escrito em $\mathbf{E}_0$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Cinemática}
+\label{sec:kinematics}
+
+% The pose of the camera frame $\mathbf{E}_{c}$ can be expressed by the \textit{homogeneous transformation matrix} $g_{0c}$:
+% %
+% %It can be expressed as a function of $\eta$ as
+% \begin{equation}
+% g_{0c} = \left[\begin{array}{cc}
+% R_{0c} & p_{0c} \\
+%      0    &   1
+% \end{array}\right] \,.
+% \label{eq:g_0b}
+% \end{equation}
+%where $R_{0b}$ is the vehicle rotation matrix.
+%
+%Define $\eta_c = [\, \eta^\mathsf{T}_{c_1} \,\,\, \eta^\mathsf{T}_{c_2} \,]^\mathsf{T} \in \mathbb{R}^{6}$ as the pose of the camera frame $\mathbf{E}_{c}$, composed of the inertial position $\eta_{c_1} = p_{0c}$ and an orientation parametrization, such as the roll, pitch and yaw (RPY) Euler angles $\eta_{c_2} = [\, \phi_{0c} \,\, \theta_{0c} \,\, \psi_{0c} \,]^{T}$.
+%
+Defina a configuração de $\mathbf{E}_{c}$ como $\eta_c = [\, \eta^\mathsf{T}_{c_1} \,\,\, \eta^\mathsf{T}_{c_2} \,]^\mathsf{T} \in \mathbb{R}^{6}$, composta pela posição inercial da câmera $\eta_{c_1} = p_{0c}$ e por uma parametrização de orientação, como por exemplo os ângulos de roll, pitch e yaw (RPY), em
+$\eta_{c_2} = [\, \phi_{0c} \,\, \theta_{0c} \,\, \psi_{0c} \,]^{T}$.
+%
+A configuração da câmera pode ser obtida a partir da configuração do navio $g_{0b}$ e da cinemática direta $g_{bc}$ da ISP:
+%
+\begin{equation}
+g_{0c} = g_{0b}(\eta_b) \, g_{bc}(q,\Pi_g) \,,
+\label{eq:fwd_kin}
+\end{equation}
+%
+%where $q\in\mathbb{R}^3$ is the vector of joint positions and $\Pi_g$ is the vector of \textit{geometric} parameters of the ISP, which are combinations of components from the axes vectors $h^b_1$, $h^{i}_{i+1}$ and the joint distances vectors $p^b_{b1}$, $p^{i}_{i,i+1}$ ($i=1,2$).
+%
+onde $q\in\mathbb{R}^3$ é o vetor de ângulos das juntas e $\Pi_g$ é o vetor de parâmetros \textit{geométricos} da ISP, composto por combinações de componentes dos vetores de eixo $h^b_1$, $h^{i}_{i+1}$($i=1,2$) e de distâncias entre as juntas $p^b_{b1}$, $p^{i}_{i,i+1}$($i=1,2$).
+
+%Let $\vec{v}_{0i}$ and $\vec{\omega}_{0i}$ be the physical linear and angular velocities of a frame $\mathbf{E}_{i}$. They are represented by $v^{i}_{0i}\in\mathbb{R}^{3}$ and $\omega^{i}_{0i}\in\mathbb{R}^{3}$ when written in their own body frame.
+%
+Seja $\vec{v}_{0i}$ e $\vec{\omega}_{0i}$ as velocidades lineares e angulares de $\mathbf{E}_{i}$,
+representadas por $v^{i}_{0i}\in\mathbb{R}^{3}$ e $\omega^{i}_{0i}\in\mathbb{R}^{3}$ quando escritas no próprio $\mathbf{E}_{i}$.
+%
+%Since $\eta_{i_1} = p_{0i}$ and $\eta_{i_2}$ is the RPY orientation, their time derivatives are:
+Já que $\eta_{i_1} = p_{0i}$ e $\eta_{i_2}$ é a orientação de $\mathbf{E}_{i}$ em ângulos de RPY, suas derivadas temporais são:
+%
+\begin{align}
+\dot{\eta}_{i_1} = R_{0i}(\eta_{i_2}) v^{i}_{0i} \,, \quad
+\dot{\eta}_{i_2} = T_{0i}(\eta_{i_2}) \, \omega^i_{0i} \,. \label{eq:body_velocity}
+\end{align}
+%
+%where $T_{0i}(\eta_{i_2}) \in \mathbb{R}^{3 \times 3}$ is known as the {\it representation Jacobian}, which is configuration-dependent.
+onde $T_{0i}(\eta_{i_2}) \in \mathbb{R}^{3 \times 3}$ é o {\it Jacobiano de representação}.
+%and $s(.)$, $c(.)$, $t(.)$ represent the sine, cosine and tangent functions.
+%
+%Recall that for the RPY representation, $T_{0i}(\eta_{i_2})$ loses rank at $\theta_{0i} = \pm \pi/2$.
+É importante ressaltar que na representação RPY, $T_{0i}(\eta_{i_2})$ perde posto em $\theta_{0i} = \pm \pi/2$.
+%However, it is assumed that regions near the singularities will never be reached in this work.
+
+%Let $V^{i}_{0i} = [\, (v^{i}_{0i})^\mathsf{T} \,\,\, (\omega^{i}_{0i})^\mathsf{T} \,]^\mathsf{T} \in \mathbb{R}^{6}$ be the \textit{body velocity twist} associated to any frame $\mathbf{E}_{i}$, such that its Lie algebra is given by $\widehat{V}^{i}_{0i} = g_{0i}^{-1} \, \dot{g}_{0i} \in se(3)$.
+%
+Seja $V^{i}_{0i} = [\, (v^{i}_{0i})^\mathsf{T} \,\,\, (\omega^{i}_{0i})^\mathsf{T} \,]^\mathsf{T} \in \mathbb{R}^{6}$ o \textit{twist} de velocidade associado à $\mathbf{E}_{i}$, tal que sua álgebra de Lie é dada por $\widehat{V}^{i}_{0i} = g_{0i}^{-1} \, \dot{g}_{0i} \in se(3)$.
+%
+%Combining \eqref{eq:body_velocity1} and \eqref{eq:body_velocity2}, the relation between $V^{i}_{0i}$ and the time-derivative of the pose $\eta_i$ is given by:
+%%
+%\begin{equation}
+%\dot{\eta}_i = J_{i} \, V^{i}_{0i} \,, \quad
+%%
+%J_{i}(\eta_{i_2}) = \left[\begin{array}{cc}
+%\!\!\! R_{0i}(\eta_{i_2}) \!\!\!&\!\!\! 		           0   \!\!\! \\
+%\!\!\!         0          \!\!\!&\!\!\! T_{0i}(\eta_{i_2}) \!\!\!
+%\end{array}\right] \,.
+%\label{eq:kin_relation}
+%\end{equation}
+%
+%Two body velocity twists associated to different frames $\mathbf{E}_i$, $\mathbf{E}_j$ located in the \textit{same rigid-body} are related through the constant adjoint map 
+%$Ad_{g_{ij}} \in \mathbb{R}^{6 \times 6}$:
+%
+Dois twists de velocidade associados a dois sistemas de referência distintos $\mathbf{E}_i$ e $\mathbf{E}_j$ localizados no {\it mesmo corpo rígido} estão relacionados através da matriz adjunta $Ad_{g_{ij}} \in \mathbb{R}^{6 \times 6}$:
+%
+\begin{equation}
+V^{i}_{0i} = Ad_{g_{ij}} V^{j}_{0j} \,, \quad
+%
+Ad_{g_{ij}} =
+\left[\begin{array}{cc}
+R_{ij} & \hat{p}^{i}_{ij} \, R_{ij} \\
+  0    &             R_{ij}
+\end{array}\right] \,,
+\label{eq:adjoint_map}
+\end{equation}
+%
+%which has the property $Ad_{g_{ji}} = Ad^{-1}_{g_{ij}}$.
+que possui a propriedade $Ad_{g_{ji}} = Ad^{-1}_{g_{ij}}$.
+
+%The body velocity twist $V^{c}_{0c}$ associated to the camera can be written as $V^{c}_{0c} = V^{c}_{bc} + Ad^{-1}_{bc}(q,\Pi_g) \, V^{b}_{0b}$, where $V^{c}_{bc}$ is the body velocity associated to $\mathbf{E}_c$ relative to the vehicle frame $\mathbf{E}_b$.
+%
+O twist $V^{c}_{0c}$ associado à câmera pode ser escrito como $V^{c}_{0c} = V^{c}_{bc} + Ad^{-1}_{bc}(q,\Pi_g) \, V^{b}_{0b}$, onde $V^{c}_{bc}$ é o twist de velocidade associado à $\mathbf{E}_c$ relativo ao sistema do veículo $\mathbf{E}_b$.
+%
+%It can be expressed in terms of the joint velocities $\dot{q}\in\mathbb{R}^{3}$ by means of the \textit{body link Jacobian} $J^c_{bc}(q,\Pi_g) \in \mathbb{R}^{6 \times 3}$ as:
+%
+Ele pode ser escrito em termos de $\dot{q}\in\mathbb{R}^{3}$ através do {\it Jacobiano geométrico} $J^c_{bc}(q,\Pi_g) \in \mathbb{R}^{6 \times 3}$:
+%
+%as $V^{i}_{bi} = J^{i}_{bi} \, \dot{q}$, yielding:
+%
+%This velocity vector can be expressed in terms of $\dot{q}$ by means of the body link Jacobian $J^i_i(q) \in \mathbb{R}^{6 \times n}$:
+%%
+%\begin{equation}
+%V^{i}_{bi} = J^{i}_i(q) \, \dot{q} \,,
+%\label{eq:geometric_Jacobian}
+%\end{equation}
+%%
+%yielding
+%
+\begin{align}
+V^{c}_{0c} &= J^{c}_{bc}(q,\Pi_g) \, \dot{q} + Ad^{-1}_{bc}(q,\Pi_g) \, V^{b}_{0b} \,.
+\label{eq:gen_vel_transform}
+\end{align}
+%
+%where the body link Jacobian $J^i_{bi}(q)$ can be derived by observing that:
+%%
+%\begin{equation}
+%\widehat{V}^{i}_{bi} = g^{-1}_{bi}(q)\,\dot{g}_{bi}(q) \,, \quad \dot{g}_{bi}(q) = \sum_{k=1}^{3}\left(\frac{\partial g_{bi}}{\partial q_k}\,\dot{q}_k\right) \,.
+%\label{eq:link_body_Lie}
+%\end{equation}
+%
+%Extracting the twist coordinates of the Lie algebra $\widehat{V}^{i}_{bi}$ in \eqref{eq:link_body_Lie}, $J^i_{bi}(q)$ can be found by collecting in its $k$-th column the $k$-th joint twist coordinates observed from frame $\mathbf{E}_i$:
+%%This way, each column maps the contributions of each joint velocity to the $i$-th velocity in body coordinates.
+%%
+%\begin{align}
+%J^i_{bi}(q) = \mat{
+%Ad^{-1}_{1i} \, X_1^1 \!\!&\!\! Ad^{-1}_{2i} \, X_2^2 \!\!&\!\!\! \cdots \!\!\!&\!\! Ad^{-1}_{ii} \, X_i^i \!\!&\!\! 0_{6 \times (3-i)}
+%},
+%\label{eq:link_body_jacobian}
+%\end{align}
+%%
+%where $X_k^k \in \mathbb{R}^{6}$ is the twist of joint $k$ in $\mathbf{E}_{k}$ coordinates. 			 Note that the last $3-i$ columns of $J^i_{bi}$ are null, since the velocity of link $i$ only depends on the previous joints.
+%%
+%Due to the ISP structure, $X_1^1 \!=\! \mat{0^{T} \!\!\!&\!\!\! z^{T}_0}^{T}$, $X_2^2 \!=\! \mat{0^{T} \!\!\!&\!\!\! y^{T}_0}^{T}$ and $X_3^3 \!=\! \mat{0^{T} \!\!\!&\!\!\! x^{T}_0}^{T}$,
+%representing the roll, pitch and yaw joints twists.
+%
+%The camera \textit{body link Jacobian} can also be partitioned into $J^{c}_{bc}(q) = \mat{(J^c_{bc_1})^\mathsf{T} \!\!\!&\!\!\! (J^c_{bc_2})^\mathsf{T}}^\mathsf{T}$, where $J^c_{bc_1}, J^c_{bc_2} \in \mathbb{R}^{3 \times 3}$ are its linear and angular parts.
+%
+O {\it Jacobiano geométrico} da câmera pode ser dividido em $J^{c}_{bc}(q) = \mat{(J^c_{bc_1})^\mathsf{T} \!\!\!&\!\!\! (J^c_{bc_2})^\mathsf{T}}^\mathsf{T}$, onde $J^c_{bc_1}, J^c_{bc_2} \in \mathbb{R}^{3 \times 3}$ são suas partes lineares e angulares.
+%
+%From \eqref{eq:gen_vel_transform} and its time-derivative, the \textit{body} angular velocity and acceleration of the camera are:
+%
+Usando \eqref{eq:gen_vel_transform} e sua derivada temporal, as velocidades e acelerações angulares da câmera são:
+%
+\begin{align}
+\omega^{c}_{0c} &= J^{c}_{bc_2}(q) \, \dot{q} + \omega^{c}_{0b} \,, \label{eq:ang_vel} \\
+\dot{\omega}^{c}_{0c} &= J^{c}_{bc_2}(q) \, \ddot{q} + \dot{J}^{c}_{bc}(q) \, \dot{q} + \dot{\omega}^{c}_{0b} \,. \label{eq:ang_accel}
+\end{align}
+
+%From the time-derivative of \eqref{eq:body_velocity}, $\ddot{\eta}_{c_2}$ is given by:
+%
+Usando a derivada de \eqref{eq:body_velocity}, $\ddot{\eta}_{c_2}$ é dado por:
+%
+\begin{align}
+\ddot{\eta}_{c_2} = T_{0c}(\eta_{c_2}) \, \dot{\omega}^{c}_{0c} + \dot{T}_{0c}(\eta_{c_2},\dot{\eta}_{c_2}) \, \omega^{c}_{0c} \,.
+\label{eq:camera_orientation3}
+\end{align}
+%
+% with $T_{0c},\,\dot{T}_{0c} \in \mathbb{R}^{3 \times 3}$ given.
+
+%With \eqref{eq:ang_vel} and \eqref{eq:ang_accel} in \eqref{eq:camera_orientation3},
+%it is possible to write it with respect to the ISP variables and the ship motion as:
+%
+Substituindo \eqref{eq:ang_vel} e \eqref{eq:ang_accel} em \eqref{eq:camera_orientation3}, obtém-se:
+%
+\begin{align}
+%R_{0c} &= R_{0b} \, R_{bc} \,, \label{eq:camera_orientation1} \\
+%\dot{\eta}_{c_2} &= J_q \, \dot{q} + J_{\omega} \, \omega^b_{0b} \,, \label{eq:camera_orientation2} \\
+\ddot{\eta}_{c_2} &= J_q \, \ddot{q} + L_q \, \dot{q} + J_{\omega} \, \dot{\omega}^b_{0b} + L_{\omega} \, \omega^b_{0b} \,, 
+\label{eq:camera_orientation}
+\end{align}
+%
+%where matrices $J_q$ and $J_\omega$ are dependent on $q,\,\eta_{c_2}$ and $\Pi_g$, while $L_q$, $L_\omega$ are also dependent on $\dot{q}$ and $\dot{\eta}_{c_2}$.
+%
+onde as matrizes $J_q$, $J_\omega$ dependem de $q,\,\eta_{c_2}$ e $\Pi_g$, enquanto $L_q$, $L_\omega$ também dependem de $\dot{q}$ e $\dot{\eta}_{c_2}$.
+
+%An important algebraic property is the \textit{linearity} of \eqref{eq:camera_orientation} with respect to the \textit{geometric} parameters:
+%
+Uma importante propriedade algébrica é a {\it linearidade} de \eqref{eq:camera_orientation} em relação à $\Pi_{g}$:
+%
+\begin{equation}
+\ddot{\eta}_{c_2} = W_\eta(q,\dot{q},\ddot{q},\eta_{c_2},\dot{\eta}_{c_2},\omega^{b}_{0b},\dot{\omega}^{b}_{0b}) \, \Pi_{g} \,.
+\label{eq:kin_regressor}
+\end{equation}
+%
+%where $W_{\eta} \in \mathbb{R}^{3\times N_g}$ is a \textit{kinematic regressor}, and $N_g$ is the number of geometric parameters.
+%
+onde $W_{\eta} \in \mathbb{R}^{3\times N_g}$ é conhecido como {\it regressor cinemático}, e $N_g$ é a dimensão de $\Pi_{g}$.
+
+%\begin{align*}
+%J_q(q,\eta_{c_2},\Pi_{g}) &= T_{0c} \, J^c_{bc_2} \,, \\
+%J_\omega(q,\eta_{c_2},\Pi_{g}) &= T_{0c} \, R^\mathsf{T}_{bc} \,, \\
+%L_q(q,\dot{q},\eta_{c_2},\dot{\eta}_{c_2},\Pi_{g}) &= T_{0c} \, \dot{J}^c_{bc_2} + \dot{T}_{0c} \, J^c_{bc_2} \,, \\
+%L_\omega(q,\dot{q},\eta_{c_2},\dot{\eta}_{c_2},\Pi_{g}) &= \dot{T}_{0c} \, R^\mathsf{T}_{bc} - T_{0c} \, \mathbf{S}(J^c_{bc_2}\,\dot{q}) R^\mathsf{T}_{bc} \,.
+%\end{align*}
+
+%These kinematic relations can be used to describe the dependance among ship, ISP and camera motion. Using \eqref{eq:kin_relation} and \eqref{eq:gen_vel_transform1} with $\mathbf{E}_i = \mathbf{E}_c$, the body velocity twist associated to the camera is given by:
+%%
+%\begin{align}
+%%\dot{\eta}_{c} = J_c(\eta_{c_2},\Pi_k) \, J^c_{gc}(q,\Pi_k) \, \zeta_b \,.
+%\dot{\eta}_{c} = J_c \, J^{c}_{bc} \, \dot{q} + J_c \, Ad^{-1}_{bc} \, V^{b}_{0b} \,.
+%\label{eq:camera_kin}
+%\end{align}
+%%
+%From \eqref{eq:g_0b}, \eqref{eq:camera_kin} and the time-derivative of \eqref{eq:camera_kin}, the angular motion of the camera is related to the ship by means of:
+
+%Next, given the pose $g_{0b}$ and the body twists $V^b_{0b}$, $\dot{V}^b_{0b}$ of the vehicle frame $\mathbf{E}_{b}$, it is possible to compute all poses $g_{0i}$, velocities $V^i_{0i}$ and accelerations $\dot{V}^i_{0i}$ of to each link ($i=1,2,3$) by means of an iterative algorithm described below. 
+%% It consists in propagating the poses and body velocity/acceleration twists of each link frame $\mathbf{E}_{i}$ through the system, obtaining $g_{0i}$, $V^{i}_{0i}$, $\dot{V}^{i}_{0i}$, $i \in \{1,2,3\}$.
+%
+Dada a configuração do navio $g_{0b}$ e seus twists de velocidade e aceleração $V^b_{0b}$, $\dot{V}^b_{0b}$, é possível calcular todas as configurações $g_{0i}$, velocidades $V^i_{0i}$ e acelerações $\dot{V}^i_{0i}$ de cada link ($i=1,2,3$) através de um procedimento iterativo, descrito abaixo.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[Propagação Cinemática]
+\label{alg:forward_propagation}
+
+O algoritmo é inicializado com $g_{00} = g_{0b}$, $V^{0}_{00} = V^{b}_{0b}$, $\dot{V}^{0}_{00} = \dot{V}^{b}_{0b}$.
+%
+%The algorithm is initialized with $V^{0}_{00} = V^{b}_{0b}$, $\dot{V}^{0}_{00} = \dot{V}^{b}_{0b} - g\,[\, z^\mathsf{T}_0 R_{0b} \,\,\,\, 0^\mathsf{T} \,]$, accounting the effects of gravity.
+%
+%If the INS is placed on the vehicle, we compute the propagating \textit{upwards}, from the vehicle to the last link, according to:
+%
+%If the INS is placed in the vehicle ($n$-th link), the propagation starts in the vehicle ($n$-th link) to the last link (vehicle).
+%
+%The propagation algorithm can be split into two: the \textit{upward} and \textit{downward} parts. The \textit{upward} propagation equations are given by:
+%
+%If the INS is located on the vehicle (indirect stabilization, $k=b$), the algorithm is initialized with $V^{0}_{00} = V^{s}_{0s}$, $\dot{V}^{0}_{00} = \dot{V}^{s}_{0s}$, and the propagation goes \textit{upwards} the kinematic chain through the following equations:
+%
+%The algorithm is initialized with the motion variables of frame $\mathbf{E}_b$. 
+%
+%Then, the pose and velocity/acceleration twists are propagated \textit{upwards} the kinematic chain from $i=0$ until $i=n=3$:
+%
+Então, configuração e twists de velocidade/aceleração são propagados de $i=0$ até $i=n=3$:
+%
+\vspace{-2mm}
+\begin{flalign}
+g_{0i} &= g_{0,i-1} \, g_{i-1,i} \,, \\
+V^{i}_{0i} &= \Omega_{i-1,i}^\mathsf{T} \, ( \Phi_{i,i-1} \, V^{i-1}_{0,i-1} + H_{i} \, \dot{q}_{i} ) \,, \label{eq:upwards_prop1} \\
+%
+\dot{V}^{i}_{0i} &= \Omega_{i-1,i}^\mathsf{T} \, ( \Phi_{i,i-1} \, \dot{V}^{i-1}_{0,i-1} + H_{i} \, \ddot{q}_{i} + A_{i} \, \dot{q}_{i}) \,.
+\label{eq:upwards_prop2}
+\end{flalign}
+%
+%The algorithm is initialized with $V^{0}_{00} = V^{s}_{0s}$, $\dot{V}^{0}_{00} = \dot{V}^{s}_{0s}$ and starts from $i-1$ being the link where the INS is placed until $i = n$.
+
+%The pose and velocity/acceleration twists of the camera are computed by $g_{0c} \!=\! g_{0n} \, g_{nc}$, $V^c_{0c} \!=\! Ad_{g_{cn}} \, V^{n}_{0n}$, $\dot{V}^c_{0c} \!=\! Ad_{g_{cn}} \, \dot{V}^{n}_{0n}$ with a constant $g_{cn}$.
+%
+Em relação à câmera, $g_{0c} \!=\! g_{0n} \, g_{nc}$, $V^c_{0c} \!=\! Ad_{g_{cn}} \, V^{n}_{0n}$, $\dot{V}^c_{0c} \!=\! Ad_{g_{cn}} \, \dot{V}^{n}_{0n}$, com $g_{cn}$ constante.
+%
+%Then, the velocities and accelerations are propagated \textit{downwards} from frame $\mathbf{E}_{i+1}$, where $\mathbf{E}_k$ is attached to, until $i=0$. The equations are given by inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%
+%where $i = 1, \ldots, n$. %The camera velocity/acceleration twists are computed by $V^c_{0c} = Ad_{g_{cn}} \, V^{n}_{0n}$, $\dot{V}^c_{0c} = Ad_{g_{cn}} \, \dot{V}^{n}_{0n}$.
+%
+%The \textit{downward} propagation equations are given by simply inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%If the INS is on the last link (direct stabilization, $k=c$), the algorithm is initialized with $V^{n}_{0n} = Ad_{g_{ns}} \, V^{s}_{0s}$, $\dot{V}^{n}_{0n} = Ad_{g_{ns}} \, \dot{V}^{s}_{0s}$, with $i = n-1, \ldots, 1$.
+%
+%In this case, the velocity/acceleration twists are propagated \textit{downwards} through equations given by simply inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%
+%\begin{flalign}
+%V^{i}_{0i} &= \Phi^{-1}_{i+1,i} \, ( \Omega_{i,i+1} \, V^{i+1}_{0,i+1} - H_{i+1} \, \dot{q}_{i+1} ) \label{eq:downwards_prop1} \\
+%%
+%\dot{V}^{i}_{0i} &= \Phi^{-1}_{i+1,i} \, ( \Omega_{i,i+1} \, \dot{V}^{i+1}_{0,i+1} - H_{i+1} \, \ddot{q}_{i+1} - A_{i+1} \, \dot{q}_{i+1} ) \,.
+%\label{eq:downwards_prop2}
+%\end{flalign}
+%
+%The matrices in \eqref{eq:upwards_prop1}, \eqref{eq:upwards_prop2} are:
+As matrizes em \eqref{eq:upwards_prop1}, \eqref{eq:upwards_prop2} são dadas por:
+%
+\begin{alignat*}{3}
+&\Phi_{i+1,i} &=& \mat{
+\mathbf{I}_{3} \!\!&\!\! -\mathbf{S}(p^{i}_{i,i+1}) \\
+0     \!\!\!\!&\!\!\!\! \mathbf{I}_{3}
+},
+%
+\Phi^{-1}_{i+1,i} &=& \mat{
+\,\, \mathbf{I}_{3} \!\!\!&\!\!\! \mathbf{S}(p^{i}_{i,i+1}) \\
+0     \!\!\!&\!\!\! \mathbf{I}_{3}
+}, \\
+%
+&H^\mathsf{T}_{i+1} &=& \mat{ 
+0^\mathsf{T} \!\!\!&\!\!\! ( h^{i}_{i+1} )^\mathsf{T}
+}\quad\,\,\,\,,
+%
+R_{i\,,i+1} &=& \exp(\mathbf{S}(h^{i}_{i+1}) \, q_{i+1})\,, \\
+%
+&\Omega_{i,i+1} &=& \mat{ 
+R_{i,i+1} \!\!\!&\!\!\! 0         \\ 
+0          \!\!\!&\!\!\! R_{i,i+1} 
+}\,\,\,,
+%
+A_{i+1} &=& \mat{
+\mathbf{S}(v^{i}_{0i} + \mathbf{S}(\omega^{i}_{0i}) \, p^{i}_{i,i+1}) \, h^{i}_{i+1} \\
+\mathbf{S}(\omega^{i}_{0i}) \, h^{i}_{i+1} }
+\end{alignat*}
+%
+%where $\exp{(.)} \in \mathbb{R}^{3\times3}$ is the exponential map for the angle-axis representation.
+%
+%where the parameters $p^{i}_{i,i+1}$ and $h^{i}_{i+1}$ compose $\Pi_{kin}$ in \eqref{eq:NE_algorithm}.
+%
+\end{algorithm}
+
+%Using \algref{alg:forward_propagation} to compute \eqref{eq:ang_vel}, \eqref{eq:ang_accel} and \eqref{eq:camera_orientation3}, it is possible to obtain $\ddot{\eta}_{c_2}$ in \eqref{eq:camera_orientation} numerically, as well as matrices $J_q$ and $J_\omega$ and the term $L_q\,\dot{q} + L_\omega\,\omega^b_{0b}$ in \eqref{eq:camera_orientation}.
+
+Usando o \algref{alg:forward_propagation} para calcular \eqref{eq:ang_vel}, \eqref{eq:ang_accel} e \eqref{eq:camera_orientation3}, é possível obter $\ddot{\eta}_{c_2}$, as matrizes $J_q$ e $J_\omega$ e o termo $L_q\,\dot{q} + L_\omega\,\omega^b_{0b}$ em \eqref{eq:camera_orientation} numericamente.
+
+%together with their respective time-derivatives:
+%
+%\begin{align}
+%L_q &= \dot{J}_q(q,\dot{q},\eta_{c_2},\dot{\eta}_{c_2},\Pi_{kin}) \in \mathbb{R}^{3 \times 3} \,, \\
+%L_\omega &= \dot{J}_\omega(q,\dot{q},\eta_{c_2},\dot{\eta}_{c_2},\Pi_{kin}) \in \mathbb{R}^{3 \times 3} \,.
+%\end{align}
+
+%Next, using \eqref{eq:gen_state} and \eqref{eq:gen_vel} with $\mathbf{E}_{i} = \mathbf{E}_{b}$, it is possible to define the system state with respect to the vehicle. Then, rewriting \eqref{eq:gen_vel_transform1} in terms of $\zeta_b$, we have:
+%%
+%\begin{align}
+%V^{i}_{0i} = J^{i}_{gi}(q) \, \zeta_b \,, \,\,\,\,\,
+%%
+%J^{i}_{gi} = \, \left[\begin{array}{cc} Ad^{-1}_{bi} & J^{i}_{bi} \end{array}\right] \in \mathbb{R}^{6 \times (6+n)} \,.
+%\label{eq:gen_vel_transform2}
+%\end{align}
+%
+%where $J^{i}_{gi}$ is the body geometric Jacobian of the VMS.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Similarly, define $\eta_c = \mat{\eta^{T}_{c_1} & \eta^{T}_{c_2}}^{T} \in \mathbb{R}^{6}$ as the pose of the sensor frame $\mathbf{E}_{c}$ with
+%respect to $\mathbf{E}_{0}$, where $\eta_{e_1} = p_{0e}$, and the orientation vector $\eta_{e_2} = \mat{\phi_{0e} & \theta_{0e} & \psi_{0e}}^{T}$ is
+%%$\eta_{e_2} = \left[\begin{array}{ccc}\!\! \phi_{0e} \!\!\!&\!\!\! \theta_{0e} \!\!\!&\!\!\! \psi_{0e} \!\!\end{array}\right]^{T}$ is
+%also described by RPY angles.
+%%
+%%The end-effector pose can be retrieved from the vehicle pose $\eta_{b}$ and the joints positions $q$ by
+%The end-effector orientation $\eta_{e_2}$ can be retrieved from the vehicle orientation $\eta_{b_2}$ and the joints positions $q$ by
+%%
+%\begin{equation}
+%R_{0e}(\eta_{e_2}) = R_{0b}(\eta_{b_2}) \, R_{be}(q) \,.
+%\label{eq:direct_kin_RPY}
+%\end{equation}
+%
+%Also, similarly to \eqref{eq:kin_relation}, we can write:
+%%
+%\begin{equation}
+%\dot{\eta}_e = J_{e} \, V^{e}_{0e} \,, \,\,\,\,
+%%
+%J_{e}(\eta_{e_2}) = \left[\begin{array}{cc}
+%\!\!\! R_{0e}(\eta_{e_2}) \!\!\!&\!\!\! 		  					0											\!\!\! \\
+%\!\!\!         0          \!\!\!&\!\!\! J_R(\eta_{e_2}) \, R_{0e}(\eta_{e_2}) \!\!\!
+%\end{array}\right] \,,
+%\label{eq:kin_relation2}
+%\end{equation}
+%%
+%where $V^{e}_{0e} \in \mathbb{R}^{6}$ is the end-effector body velocity twist.
+%%
+%Note that, substituting \eqref{eq:gen_vel_transform1} for $i = e$ in \eqref{eq:kin_relation2}, $\dot{\eta}_{e2}$ can be written as:
+%%
+%\begin{equation}
+%\dot{\eta}_{e2} = J_R(\eta_{e2}) \, R_{0b}(\eta_{2}) \, \omega^{b}_{0b} + J_R(\eta_{e2}) \, R_{0e}(\eta_{e2}) \, J^i_{Oi} \, \dot{q} \,.
+%\label{eq:kin_relation3}
+%\end{equation}
+
+%In the direct approach for LOS control, the angular rate sensors are placed on the ISP 	end-effector.   Therefore, we can also define
+%the following generalized coordinates and velocities:
+%%
+%\begin{flalign}
+%\xi_e &= \left[\begin{array}{cc} \eta^{T}_e & q^{T} \end{array}\right]^{T} \in \mathbb{R}^{6+n} \label{eq:gen_state2} \,, \\
+%%
+%\zeta_e &= \left[\begin{array}{cc} (V^{e}_{0e})^{T} & \dot{q}^{T} \end{array}\right]^{T} \in \mathbb{R}^{6+n} \,. \label{eq:gen_vel2}
+%\end{flalign}
+%%
+%Considering the last link as the end-effector, \eqref{eq:gen_vel_transform2} can be used to express the relation between    $\zeta_e$
+%and $\zeta$ as:
+%%
+%\begin{equation}
+%\zeta = J_{e}(q) \, \zeta_e \,, \quad
+%%
+%J_e (q) = \left[\begin{array}{ccc}
+%Ad_{g_{be}} & Ad_{g_{be}} \, J^e_e \\
+      %0     &     I_{n \times n}
+%\end{array}\right] \,.
+%\label{eq:end_effector_transform}
+%\end{equation}
+
+%Therefore, substituting \eqref{eq:end_effector_transform} into \eqref{eq:quasi_velocities_HEADS}, the relation between $\zeta$    and
+%$\dot{\xi}$ is given by:
+%%
+%\begin{equation}
+%\dot{\xi} = J_{a}(\xi) \, J_{e}(q) \, \zeta_e \,.
+%\label{eq:quasi_velocities_HEADS2}
+%\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Dinâmica}
+\label{sec:dynamic_model}
+
+%In \cite{Gravdahl2014}, it is shown that the equations of motion for a vehicle-manipulator system (VMS) with respect to the vehicle CG frame $\mathbf{E}_{b}$ is written as:
+%
+Em \cite{Gravdahl2014}, as equações de movimento de um sistema veículo-manipulador ({\it vehicle-manipulator system} - VMS) em relação sistema de referência do veículo $\mathbf{E}_{b}$ são dadas por:
+%
+%However, the system dynamics can also be written w.r.t the INS variables by using \eqref{eq:adjoint_map} and its time derivative for $i = b$ and $j = s$, yielding:
+%
+\begin{equation}
+M_{qq}\,\ddot{q} + C_{qq}\,\dot{q} + G_{q} + M_{qV}\,\dot{V}^{b}_{0b} + C^{b}_{qV}\,V^{b}_{0b} = \tau_q \,,
+\label{eq:HEADS_dynamics}
+\end{equation}
+%
+%where $\tau_q \in \mathbb{R}^{n}$ is the vector of generalized forces acting on the joints, collocated with $\dot{q}$.
+%
+onde $\tau_q \in \mathbb{R}^{n}$ é o vetor de torques nas juntas da ISP.
+%
+$M_{qq}(q,\Pi_g,\Pi_d) \in \mathbb{R}^{3 \times 3}$ e $M_{qV}(q,\Pi_g,\Pi_d) \in \mathbb{R}^{3 \times 6}$ são matrizes de massa,
+%
+$C_{qq}(q,\dot{q},V^{b}_{0b},\Pi_g,\Pi_d) \in \mathbb{R}^{3 \times 3}$ e $C_{qV}(q,\dot{q},V^{b}_{0b},\Pi_g,\Pi_d) \in \mathbb{R}^{3 \times 6}$ são matrizes de Coriolis
+%
+%due to joint motions and frame $\mathbf{E}_{k}$ motion, 
+e $G_{q}(q,\eta_{b_2}) \in \mathbb{R}^{3}$ é o vetor de gravidade, onde $\Pi_{d} \in \mathbb{R}^{N_d}$ é o vetor de parâmetros {\it dinâmicos}.
+%
+Da mesma forma que em \eqref{eq:kin_regressor}, \eqref{eq:HEADS_dynamics} é {\it linear} em relação à tais parâmetros:
+%
+\begin{equation}
+Y_q( q,\dot{q}, \ddot{q}, \eta_{b_2}, V^{b}_{0b}, \dot{V}^{b}_{0b}, g, \Pi_g) \, \Pi_{d} = \tau_q \,,
+\label{eq:dyn_regressor}
+\end{equation}
+%
+onde $Y_q \in \mathbb{R}^{3\times N_d}$ é um \textit{regressor dinâmico} e $N_d$ é a dimensão de $\Pi_{d}$.
+
+%It is well known that the \textit{Newton Euler} method is a computationally efficient algorithm that can be used to numerically solve the \textit{inverse dynamics} problem for \eqref{eq:HEADS_dynamics}.
+%
+O método de {\it Newton Euler} é um algoritmo computacionalmente eficiente para o cálculo da {\it dinâmica inversa} de \eqref{eq:HEADS_dynamics}.
+%
+Dados $q$, $\dot{q}$, $\ddot{q}$, $\eta_{b_2}$, $V^{b}_{0b}$, $\dot{V}^{b}_{0b}$, $g$, $\Pi_g$ e $\Pi_d$, o algoritmo pode ser expresso por:
+%
+\begin{equation}
+\tau_q = \, NE( q, \dot{q}, \ddot{q}, \eta_{b_2}, V^{b}_{0b}, \dot{V}^{b}_{0b}, g, \Pi_g, \Pi_d ) \,.
+\label{eq:NE_algorithm}
+\end{equation}
+%
+%where $\Pi^\mathsf{T} = \left[\!\!\!\!\begin{array}{cc} \Pi^\mathsf{T}_{g} \!\!&\!\! \Pi^\mathsf{T}_{d} \end{array}\!\!\!\!\right]$ contains combinations of the kinematic (joint distances and joint axes of rotation) and dynamic parameters (masses and inertias) of the system.
+
+%The algorithm can be employed, for example, to design control laws based on computed torque using nominal parameters $\widehat{\Pi}$, and also to solve the \textit{forward dynamics} problem of \eqref{eq:HEADS_lagrange_dynamics_indirect} using the real parameters $\Pi$ for system simulation.
+
+%It is composed of two steps: the first one is the \textit{propagation of velocities and accelerations} upwards the kinematic chain, summarized in \algref{alg:forward_propagation}. The second one consists in solving the dynamic equations of motion for each rigid body in the system, starting from the $n$-th link and ending in $\mathbf{E}_b$.
+%
+O método é composto por dois passos distintos: o primeiro é a {\it propagação de velocidades e acelerações} ao longo da cadeia cinemática, já introduzido no \algref{alg:forward_propagation}. O segundo passo consiste na resolução das equações de movimento para cada corpo rígido do sistema, começando do último elo até o frame do navio $\mathbf{E}_b$.
+
+%For the particular application of this work, only the case of rotational joints is considered.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{algorithm}[Propagação de Esforços]
+\label{alg:backward_propagation}
+
+%The objective is to compute the contact forces between the VM system bodies (links and vehicle) from the velocities and accelerations calculated in the previous step, and then project it on the proper axis to find out the corresponding joint torque.
+%
+%Solving the Newton-Euler equations for the contact \textit{body wrenches} $F^{i}_{i} \in \mathbb{R}^{6}$ between the VMS bodies (links and vehicle), yields:
+%
+Resolvendo as equações de Newton-Euler para as esforços (forças e torques) de contato $F^{i}_{i} \in \mathbb{R}^{6}$ entre dois corpos consecutivos, obtém-se:
+%
+\begin{align}
+F^{i}_{i} &= \Phi^\mathsf{T}_{i+1,i} \, \Omega_{i,i+1} \, F^{i+1}_{i+1} + M_{i} \, \dot{V}^{i}_{0i} + B_{i} \,, \label{eq:backward_step} \\
+%
+M_{i} &= \left[\!\!\!\!\begin{array}{cc}
+m_i \, \mathbf{I}_{3} \!\!\!\!\!&\!\!\!\!\! - m_i \, \mathbf{S}(p^{i}_{i\bar{i}}) \\
+m_i \, \mathbf{S}(p^{i}_{i\bar{i}}) \!\!\!\!\!&\!\!\!\!\! I^{i}_{i}
+\end{array}\!\!\!\!\right], \nonumber \\
+%
+B_{i} &= \left[\!\!\!\!\begin{array}{c}
+m_i \, \mathbf{S}(\omega^{i}_{0i}) \, ( \mathbf{S}(\omega^{i}_{0i}) \, p^{i}_{i\bar{i}} + v^{i}_{0i} ) \\
+m_i \, \mathbf{S}(p^{i}_{i\bar{i}}) \, \mathbf{S}(\omega^{i}_{0i}) \, v^{i}_{0i} +
+\mathbf{S}(\omega^{i}_{0i}) \, I^{i}_{i} \, \omega^{i}_{0i}
+\end{array}\!\!\!\!\right], \nonumber
+%
+\end{align}
+%
+%where $I^{i}_{i} = I^{\bar{i}}_{\bar{i}} - m_i \, (\hat{p}^{i}_{i\,\bar{i}})^{2}$ is the inertia tensor of body $i$ written in $\mathbf{E}_{i}$.
+%
+%where the parameters $p^{i}_{i\bar{i}}$, $m_i$ and $I^i_i$ compose $\Pi_{d}$ in \eqref{eq:NE_algorithm}.
+%
+onde os parâmetros $p^{i}_{i\bar{i}}$, $m_i$ and $I^i_i$ compõem $\Pi_{d}$.
+
+%These equations must be solved from $i=n=3$ to $i = 1$, using the velocity and acceleration twists $V^{i}_{0i}$ and $\dot{V}^{i}_{0i}$ previously computed in \algref{alg:forward_propagation}.
+%
+Estas equações devem ser resolvidas de $i=n=3$ até $i = 1$, utilizando os twists $V^{i}_{0i}$ e $\dot{V}^{i}_{0i}$ previamente calculados através do \algref{alg:forward_propagation}.
+%
+%We could also solve it till $i = 0$ to find the vehicle wrenches. However, it is irrelevant in this application, since we are not interested in the vehicle motion.
+%
+%For $i = 3$, $F^{4}_{4} = 0$, if there are no external wrenches being applied to link 3.
+%Also, we set here $n+1 = c$ and we do not consider external wrenches acting on the camera frame $\mathbf{E}_c$, so that $F^{n+1}_{n+1} = 0$.
+%
+Além disso, $n+1 = c$ e esforços externos agindo no frame da câmera $\mathbf{E}_c$ (último elo) não são considerados, e portanto $F^{n+1}_{n+1} = 0$.
+%
+\end{algorithm}
+
+%Finally, the joint torques can be computed projecting the wrenches acting on frames $\mathbf{E}_i$ into their rotation axis by:
+%
+Finalmente, os torques nas juntas podem ser calculados através da projeção dos esforços agindo em $\mathbf{E}_i$ sobre seus respectivos eixos de rotação:
+%
+\begin{equation}
+\tau_{q_i} = H^\mathsf{T}_{i} \, \Omega_{i-1,i} \, F^{i}_{i} \,. \qquad i = 1,...,n \,.
+\label{eq:joint_force_projection}
+\end{equation}
+
+%Note that \eqref{eq:backward_step} does not take into account the gravity forces acting on the links.
+%
+Note que \eqref{eq:backward_step} não leva em consideração o peso dos elos.
+%
+%The effect of gravity (in $-z_0$ direction) is introduced by modifying $\dot{V}^i_{0i}$ in \eqref{eq:backward_step} for each $i$-th link with:
+%
+O efeito da gravidade (na direção $-z_0$) é introduzido modificando $\dot{V}^i_{0i}$ em \eqref{eq:backward_step}:
+%
+\begin{equation}
+\dot{V}^i_{0i} \leftarrow \dot{V}^i_{0i} - g \mat{R^\mathsf{T}_{0i} \, z_0 \\ 0} \,, \quad i = 1,...,n \,.
+\label{eq:gravity_effect}
+\end{equation}
+
+%This algorithm can be used to compute the terms and some matrices of \eqref{eq:HEADS_dynamics} separately: the mass matrices $M_{qq}$, $M_{qV}$, the gravity vector $G_q$ and the Coriolis term $C_{qq} \, \dot{q} + C_{qV} \, V^b_{0b}$.
+%
+Este algoritmo pode ser utilizado para o cálculo dos termos e de algumas matrizes em \eqref{eq:HEADS_dynamics} separadamente, em particular as matrizes de massa $M_{qq}$, $M_{qV}$, o vetor de gravidade $G_q$ e o termo de Coriolis $C_{qq} \, \dot{q} + C_{qV} \, V^b_{0b}$.
+
+%\subsubsection{Computation of Dynamic Terms}
+% \textit{\textbf{Computation of Dynamic Terms}}
+%\label{sec:compute_terms}
+
+%{\bf \textit{Computation of Dynamic Terms}}
+
+%Algorithms \ref{alg:forward_propagation} and \ref{alg:backward_propagation} can be used to numerically compute the terms and some matrices of \eqref{eq:HEADS_dynamics} separately, as follows:
+%%
+%\begin{itemize}
+%%
+%%\item $J^c_c$: the $j$-th ($j=1,...,n$) column of the camera body Jacobian $J^c_c$ is obtained by computing $V^c_{0c}$ from \eqref{eq:upwards_prop1} with $V^0_{00} = 0$ and $\dot{q}_j = 1$, $\dot{q}_i = 0 \,, \forall i \neq j$;
+%%
+%\item $M_{qq}$: the $j$-th ($j=1,...,n$) column of $M_{qq}$ can be computed by $NE(q, 0, \epsilon_j, 0, 0, 0, 0, \Pi)$, where $\epsilon_j$ is the $j$-th canonical basis element of $\mathbb{R}^{n}$;
+%%
+%\item $M_{qV}$: the $j$-th ($j=1,...,6$) column of $M_{qV}$ can be computed by $NE(q, 0, 0, 0, 0, \epsilon_j, 0, \Pi)$, where $\epsilon_j$ is the $j$-th canonical basis element of $\mathbb{R}^{6}$;
+%%
+%\item $G_q = NE(q, 0, 0, R_{0b}, 0, 0, g, \Pi)$;
+%%since all other terms but $G^c_q$ vanish in \eqref{eq:HEADS_lagrange_dynamics_indirect} for this case.
+%%
+%\item $C_{qq} \, \dot{q} + C_{qV} \, V^b_{0b} = NE(q, \dot{q}, 0, 0, V^b_{0b}, 0, 0, \Pi)$.
+%%
+%\end{itemize}
+%
+%Notice that neither $C_{qq}(q,\dot{q},V^b_{0b})$ nor $C_{qV}(q,\dot{q},V^b_{0b})$ can be computed separately by the Newton-Euler algorithm. This is due to the fact that their forms are not unique \cite{Gravdahl2014}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%Finally, with all dynamic matrices determined, the lower part of \eqref{eq:vehicle_manipulator_system_equation_sep}  gives the
+%dynamic equation of the ISP:
+%%
+%\begin{equation}
+%M_{qq} \, \ddot{q} + C_{qq} \, \dot{q} + G_{q} + \underbrace{M_{qV} \, \dot{V}^{b}_{0b} + C_{qV} \, V^{b}_{0b}}_{\text{vehicle motion terms}} = \tau_{q} \,.
+%\label{eq:HEADS_lagrange_dynamics_indirect}
+%\end{equation}
+%%
+%Note that \eqref{eq:HEADS_lagrange_dynamics_indirect} is suitable for the indirect stabilization approach, since the body velocity and acceleration twist of the vehicle appears explicitly on the equation. Setting $n=3$ in \eqref{eq:HEADS_lagrange_dynamics_indirect} gives us the dynamic equations of the 3 DOF ISP.
+%
+%%Considering the direct approach, one can use \eqref{eq:end_effector_transform} and its time derivative    				      	 to rewrite
+%%\eqref{eq:vehicle_manipulator_system_equation} as:
+%%%
+%%\begin{flalign}
+%%\overline{M}(q) \, \dot{\zeta}_e + \overline{C}(q,\zeta_e) \, \zeta_e + G(\xi_e) &= \tau \,, \label{eq:vehicle_manipulator_system_equation2}
+%%\end{flalign}
+%%%
+%%with mass and Coriolis matrices given by
+%%%
+%%\begin{flalign}
+%%\overline{M}(q) &= M(q) \, J^{-1}_{e} \,, \\
+%%\overline{C}(q,\zeta_e) &= M(q) \, \dot{J}^{-1}_{e} + C(q,\zeta_e) \, J^{-1}_{e} \,.
+%%\end{flalign}
+%%%
+%%Then, in a similar way as in \eqref{eq:vehicle_manipulator_system_equation_sep} and      \eqref{eq:HEADS_lagrange_dynamics_indirect},
+%%the dynamic equation of the $3$ DOF ISP in the direct form is:
+%%%
+%%\begin{equation}
+%%\overline{M}_{qq} \, \ddot{q} + \overline{C}_{qq} \, \dot{q} + G_{q} + \underbrace{\overline{M}_{qV} \, \dot{V}^{e}_{0e} + \overline{C}_{qV} \, V^{e}_{0e}}_{\text{vehicle motion terms}} =
+%%\tau_{q} \,.
+%%\label{eq:HEADS_lagrange_dynamics_direct}
+%%\end{equation}
+%%%
+%%where
+%%%
+%%\begin{flalign}
+%%M^{e}_{qq}(q) &= M_{qq} - M_{qV} \, Ad_{g_{be}} \, J^e_{e} \,, \\
+%%M^{e}_{qV}(q) &= M_{qV} \, Ad_{g_{be}} \,, \\
+%%C^{e}_{qq}(q,\zeta_e) &= C_{qq} - M_{qV} \, (\dot{Ad}_{g_{be}} \, J^e_{e} + Ad_{g_{be}} \, \dot{J}^e_{e}) - C_{qV} \, Ad_{g_{be}} \, J^e_{e} \,, \\
+%%C^{e}_{qV}(q,\zeta_e) &= M_{qV} \, \dot{Ad}_{g_{be}} + C_{qV} \, Ad_{g_{be}} \,.
+%%\end{flalign}
+%
+%Comparing \eqref{eq:HEADS_lagrange_dynamics_indirect} with the usual dynamics of robotic systems, the vehicle motion introduces two additional contributions on the joint torques, which depend on the vehicle velocities
+%and accelerations.
+%%
+%These torques can be compensated in the control if we measure or estimate
+%$V^{b}_{0b}$ and $\dot{V}^{b}_{0b}$ by inertial sensors, for example, and suppose that the system parameters that define the matrices in
+%\eqref{eq:HEADS_lagrange_dynamics_indirect} are known or estimated.
+%%
+%It is worth noting that the dynamic matrices do not depend on all terms: $M_{qq}(q)$, $M_{qV}(q)$, $C_{qq}(q,\zeta)$, $C_{qV}(q,\zeta)$ and
+%$G_{q}(\xi)$.
+%%
+%%It is worth noting that, while $M_{qq}$ and $M_{qV}$ depend only on $q$, $C_{qq}$ and $C_{qV}$ depend on $q$  and $\zeta$,  and $G_q$
+%%depends on $\xi$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection{Newton-Euler Algorithm for VM Systems}
+%\label{sec:NE_algorithm}
+%
+%It is well known that the \textit{Newton Euler} method is a computationally efficient algorithm that can 
+%be used to numerically solve the \textit{inverse dynamics} problem for \eqref{eq:vehicle_manipulator_system_equation_sep}.
+%%
+%%That is, it expresses the joint torques in \eqref{eq:HEADS_lagrange_dynamics_indirect} as functions of the robot motion and of frame $\mathbf{E}_{k}$ motion.
+%
+%Given $q$, $\dot{q}$, $\ddot{q}$, $\eta_{b_2}$, $V^{b}_{0b}$, $\dot{V}^{b}_{0b}$ and $g \in \mathbb{R}$, 
+%the \textit{Newton-Euler} algorithm for the inverse dynamics is expressed by the function:
+%%
+%\begin{equation}
+%\tau_q = \, NE( q, \dot{q}, \ddot{q}, \eta_{b_2}, V^{b}_{0b}, \dot{V}^{b}_{0b}, g, \Pi ) \,,
+%\label{eq:NE_algorithm}
+%\end{equation}
+%%
+%where $\Pi^\mathsf{T} = \left[\!\!\!\!\begin{array}{cc} \Pi^\mathsf{T}_{kin} & \Pi^\mathsf{T}_{dyn} \end{array}\!\!\!\!\right]$ 
+%contains combinations of the kinematic (joint distances and joint axes of rotation) and dynamic parameters (masses and inertias) of the system.
+%%%
+%%\begin{equation}
+%%\tau_q =\,Y_q( k, q, \dot{q}, \ddot{q}, \eta_{k_2}, V^{k}_{0k}, \dot{V}^{k}_{0k}, g ) \, \pi.
+%%\label{eq:NE_algorithm}
+%%\end{equation}
+%
+%%The algorithm can be employed, for example, to design control laws based on computed torque using nominal parameters $\widehat{\Pi}$, and also to solve the \textit{forward dynamics} problem of \eqref{eq:HEADS_lagrange_dynamics_indirect} using the real parameters $\Pi$ for system simulation.
+%
+%The Newton-Euler algorithm is composed of two steps, summarized below. For the particular application of 
+%this work, only the case of rotational joints is considered.
+%
+%\vspace{1mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{\textbf{Propagation of Velocities and Accelerations}}
+%\label{sec:forward_propagation}
+%
+%the first step consists in propagating the body velocity/acceleration twists of each link frame $\mathbf{E}_{i}$ 
+%through the system, obtaining $V^{i}_{0i}$, $\dot{V}^{i}_{0i}$, $i \in \{1,2,...,n\}$. The algorithm is 
+%initialized with $V^{0}_{00} = V^{b}_{0b}$, $\dot{V}^{0}_{00} = \dot{V}^{b}_{0b} - g\,[\, z^\mathsf{T}_0 R_{0b} \,\,\,\, 0^\mathsf{T} \,]$, 
+%accounting the effects of gravity.
+%%
+%%If the INS is placed on the vehicle, we compute the propagating \textit{upwards}, from the vehicle to the last link, according to:
+%%
+%%If the INS is placed in the vehicle ($n$-th link), the propagation starts in the vehicle ($n$-th link) to the last link (vehicle).
+%%
+%%The propagation algorithm can be split into two: the \textit{upward} and \textit{downward} parts. The \textit{upward} propagation equations are given by:
+%%
+%%If the INS is located on the vehicle (indirect stabilization, $k=b$), the algorithm is initialized with $V^{0}_{00} = V^{s}_{0s}$, $\dot{V}^{0}_{00} = \dot{V}^{s}_{0s}$, and the propagation goes \textit{upwards} the kinematic chain through the following equations:
+%%
+%%The algorithm is initialized with the motion variables of frame $\mathbf{E}_b$. 
+%%
+%Then, the velocities and accelerations are propagated \textit{upwards} the kinematic chain from $i=0$ until $i=n$:
+%%
+%\begin{flalign}
+%V^{i}_{0i} &= \Omega_{i-1,i}^{T} \, ( \Phi_{i,i-1} \, V^{i-1}_{0,i-1} + H_{i} \, \dot{q}_{i} ) \,, \label{eq:upwards_prop1} \\
+%%
+%\dot{V}^{i}_{0i} &= \Omega_{i-1,i}^{T} \, ( \Phi_{i,i-1} \, \dot{V}^{i-1}_{0,i-1} + H_{i} \, \ddot{q}_{i} + A_{i} \, \dot{q}_{i}) \,.
+%\label{eq:upwards_prop2}
+%\end{flalign}
+%%
+%%The algorithm is initialized with $V^{0}_{00} = V^{s}_{0s}$, $\dot{V}^{0}_{00} = \dot{V}^{s}_{0s}$ and starts from $i-1$ being the link where the INS is placed until $i = n$.
+%
+%The velocity/acceleration twists of the camera are computed by $V^c_{0c} = Ad_{g_{cn}} \, V^{n}_{0n}$, $\dot{V}^c_{0c} = Ad_{g_{cn}} \, \dot{V}^{n}_{0n}$, with a constant $g_{cn}$.
+%%
+%%Then, the velocities and accelerations are propagated \textit{downwards} from frame $\mathbf{E}_{i+1}$, where $\mathbf{E}_k$ is attached to, until $i=0$. The equations are given by inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%%
+%%where $i = 1, \ldots, n$. %The camera velocity/acceleration twists are computed by $V^c_{0c} = Ad_{g_{cn}} \, V^{n}_{0n}$, $\dot{V}^c_{0c} = Ad_{g_{cn}} \, \dot{V}^{n}_{0n}$.
+%%
+%%The \textit{downward} propagation equations are given by simply inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%%If the INS is on the last link (direct stabilization, $k=c$), the algorithm is initialized with $V^{n}_{0n} = Ad_{g_{ns}} \, V^{s}_{0s}$, $\dot{V}^{n}_{0n} = Ad_{g_{ns}} \, \dot{V}^{s}_{0s}$, with $i = n-1, \ldots, 1$.
+%%
+%%In this case, the velocity/acceleration twists are propagated \textit{downwards} through equations given by simply inverting \eqref{eq:upwards_prop1} and \eqref{eq:upwards_prop2}:
+%%
+%%\begin{flalign}
+%%V^{i}_{0i} &= \Phi^{-1}_{i+1,i} \, ( \Omega_{i,i+1} \, V^{i+1}_{0,i+1} - H_{i+1} \, \dot{q}_{i+1} ) \label{eq:downwards_prop1} \\
+%%%
+%%\dot{V}^{i}_{0i} &= \Phi^{-1}_{i+1,i} \, ( \Omega_{i,i+1} \, \dot{V}^{i+1}_{0,i+1} - H_{i+1} \, \ddot{q}_{i+1} - A_{i+1} \, \dot{q}_{i+1} ) \,.
+%%\label{eq:downwards_prop2}
+%%\end{flalign}
+%%
+%The matrices in \eqref{eq:upwards_prop1}, \eqref{eq:upwards_prop2} are given by:
+%%
+%\begin{alignat*}{3}
+%&\Phi_{i+1,i} &&= \mat{
+%\,\, \mathbf{I}_{3} \!\!\!&\!\!\! -\hat{p}^{i}_{i,i+1} \\
+%0     \!\!\!&\!\!\! \mathbf{I}_{3}
+%}, \quad
+%%
+%\Phi^{-1}_{i+1,i} &&= \mat{
+%\,\, \mathbf{I}_{3} \!\!\!&\!\!\! \hat{p}^{i}_{i,i+1} \\
+%0     \!\!\!&\!\!\! \mathbf{I}_{3}
+%}, \\
+%%
+%& H_{i+1} &&= \mat{ 
+%0^\mathsf{T} \!\!\!&\!\!\! ( h^{i}_{i+1} )^\mathsf{T}
+%}^\mathsf{T} , \quad
+%%
+%R_{i\,,i+1} &&= \exp(\hat{h}^{i}_{i+1} \, q_{i+1})\,, \\
+%%
+%&\Omega_{i,i+1} &&= \mat{ 
+%R_{i,i+1} \!\!\!&\!\!\! 0         \\ 
+%0          \!\!\!&\!\!\! R_{i,i+1} 
+%}, \quad 
+%%
+%A_{i+1} &&= \mat{
+%(\hat{v}^{i}_{0i} + \reallywidehat{\hat{\omega}^{i}_{0i} \, p^{i}_{i,i+1}}) \, h^{i}_{i+1} \\
+%\hat{\omega}^{i}_{0i} \, h^{i}_{i+1} } \,,
+%\end{alignat*}
+%%
+%%where $\exp{(.)} \in \mathbb{R}^{3\times3}$ is the exponential map for the angle-axis representation.
+%%
+%where the parameters $p^{i}_{i,i+1}$ and $h^{i}_{i+1}$ compose $\Pi_{kin}$ in \eqref{eq:NE_algorithm}.
+%
+%%Note that this algorithm can be generalized to be initialized with twists anywhere on the system, and not just on the first or last body, given that the two procedures are followed.
+%
+%\vspace{1mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsubsection{\textbf{Backward Propagation of Wrenches}}
+%\label{sec:backward_propagation}
+%
+%the second step of the algorithm consists in solving the dynamic equations of motion for each rigid body in the system, starting from the $n$-th link and 
+%ending up on the vehicle frame. 
+%%
+%%The objective is to compute the contact forces between the VM system bodies (links and vehicle) from the velocities and accelerations calculated in the previous step, and then project it on the proper axis to find out the corresponding joint torque.
+%%
+%Solving the Newton-Euler equations for the contact \textit{body wrenches} $F^{i}_{i} \in \mathbb{R}^{6}$ between the VMS bodies (links and vehicle), yields:
+%%
+%\begin{equation}
+%F^{i}_{i} = \Phi^{T}_{i+1,i} \, \Omega_{i,i+1} \, F^{i+1}_{i+1} + M_{i} \, \dot{V}^{i}_{0i} + B_{i} \,,
+%\label{eq:backward_step}
+%\end{equation}
+%%
+%\begin{equation*}
+%M_{i} = \left[\begin{array}{cc}
+%m_i \, \mathbf{I}_{3} \!\!&\!\! - m_i \, \hat{p}^{i}_{i\bar{i}} \\
+%m_i \, \hat{p}^{i}_{i\bar{i}} \!\!&\!\! I^{i}_{i}
+%\end{array}\right] , \,\,\,\,
+%%
+%B_{i} = \left[\begin{array}{c}
+%m_i \, \hat{\omega}^{i}_{0i} \, ( \hat{\omega}^{i}_{0i} \, p^{i}_{i\bar{i}} + v^{i}_{0i} ) \\
+%m_i \, \hat{p}^{i}_{i\bar{i}} \, \hat{\omega}^{i}_{0i} \, v^{i}_{0i} +
+%\hat{\omega}^{i}_{0i} \, I^{i}_{i} \, \omega^{i}_{0i}
+%\end{array}\right] ,
+%%
+%\end{equation*}
+%%
+%%where $I^{i}_{i} = I^{\bar{i}}_{\bar{i}} - m_i \, (\hat{p}^{i}_{i\,\bar{i}})^{2}$ is the inertia tensor of body $i$ written in $\mathbf{E}_{i}$.
+%%
+%where the parameters $p^{i}_{i\bar{i}}$, $m_i$ and $I^i_i$ compose $\Pi_{dyn}$ in \eqref{eq:NE_algorithm}. 
+%
+%These equations must be solved from $i = n$ to $i = 1$, using the velocity and acceleration twists $V^{i}_{0i}$ and $\dot{V}^{i}_{0i}$ previously computed in the first step. 
+%%
+%We could also solve it till $i = 0$ to find the vehicle wrenches. However, it is irrelevant in this application, since we are not interested in the vehicle motion.
+%%
+%%For $i = 3$, $F^{4}_{4} = 0$, if there are no external wrenches being applied to link 3.
+%Also, we set here $n+1 = c$ and we do not consider external wrenches acting on the camera frame $\mathbf{E}_c$, so that $F^{n+1}_{n+1} = 0$.
+%
+%Finally, the joint torques can be computed projecting the wrenches acting on frames $\mathbf{E}_i$ into their rotation axis by:
+%%
+%\begin{equation}
+%\tau_{q_i} = H^{T}_{i} \, \Omega_{i-1,i} \, F^{i}_{i} \,. \qquad i = 1,...,n \,.
+%\label{eq:joint_force_projection}
+%\end{equation}
+%
+%%Note that \eqref{eq:backward_step} does not take into account the gravity forces acting on the links. In other words, the joint torque vector $\tau_q$ obtained in \eqref{eq:joint_force_projection} is equivalent to \eqref{eq:HEADS_lagrange_dynamics_indirect} only for $G(\xi_b) = 0$.
+%%%
+%%The effect of gravity can be introduced in the model on the first step of the algorithm by adding to the initial link a linear acceleration with norm $g$, but with opposite signal:
+%%
+%%Therefore, it is enough to initialize $\dot{V}^{0}_{00}$ or $\dot{V}^{n+1}_{0n+1}$ in the first step with:
+%%
+%%$\dot{V}^{0}_{00} = \dot{V}^{s}_{0s} - [\,\, ( g \, R_{0s}^{T} \, z_0 )^{T} \,\,\, 0^{T} \,\,]^{T}$.
+%%
+%% \begin{alignat}{3}
+%% &\dot{V}^{0}_{00} &= \dot{V}^{s}_{0s} - J_{R_{0s}}^{T} \, G &&, \quad
+%% %
+%% \dot{V}^{n+1}_{0n+1} = Ad_{g_{nc}} \, ( \dot{V}^{c}_{0c} - J_{R_{0c}}^{T} \, G ) \,,
+%% \label{eq:gravity_effect}
+%% \end{alignat}
+%%
+%% \begin{equation}
+%% \dot{V}^k_{0k} \leftarrow \dot{V}^k_{0k} - \Omega_{0k}^{T} \, G \,, \qquad
+%% G = \left[\!\!\!\!\begin{array}{cc} g \, z^{T}_0 & 0^T \end{array}\!\!\!\!\right]^T \,.
+%% \label{eq:gravity_effect}
+%% \end{equation}
+%%
+%%\begin{equation}
+%%\dot{V}^b_{0b} \leftarrow \dot{V}^b_{0b} - g \mat{R^T_{0b} \, z_0 \\ 0} \,.
+%%\label{eq:gravity_effect}
+%%\end{equation}
+%
+%%\subsubsection{Computation of Dynamic Terms}
+%% \textit{\textbf{Computation of Dynamic Terms}}
+%%\label{sec:compute_terms}
+%
+%\medskip
+%{\bf \textit{Computation of Dynamic Terms}}
+%\medskip
+%
+%The algorithm can be used to numerically compute the terms and some matrices of \eqref{eq:HEADS_lagrange_dynamics_indirect} separately, as follows:
+%%
+%\begin{itemize}
+%%
+%%\item $J^c_c$: the $j$-th ($j=1,...,n$) column of the camera body Jacobian $J^c_c$ is obtained by computing $V^c_{0c}$ from \eqref{eq:upwards_prop1} with $V^0_{00} = 0$ and $\dot{q}_j = 1$, $\dot{q}_i = 0 \,, \forall i \neq j$;
+%%
+%\item $M_{qq}$: the $j$-th ($j=1,...,n$) column of $M_{qq}$ can be computed by $NE(q, 0, \epsilon_j, 0, 0, 0, 0, \Pi)$, where $\epsilon_j$ is the $j$-th canonical basis element of $\mathbb{R}^{n}$;
+%%
+%\item $M_{qV}$: the $j$-th ($j=1,...,6$) column of $M_{qV}$ can be computed by $NE(q, 0, 0, 0, 0, \epsilon_j, 0, \Pi)$, where $\epsilon_j$ is the $j$-th canonical basis element of $\mathbb{R}^{6}$;
+%%
+%\item $G_q = NE(q, 0, 0, \eta_{b_2}, 0, 0, g, \Pi)$;
+%%since all other terms but $G^c_q$ vanish in \eqref{eq:HEADS_lagrange_dynamics_indirect} for this case.
+%%
+%\item $C_{qq} \, \dot{q} + C_{qV} \, V^b_{0b} = NE(q, \dot{q}, 0, 0, V^b_{0b}, 0, 0, \Pi)$.
+%%
+%\end{itemize}
+%
+%Notice that neither $C_{qq}(q,\dot{q},V^b_{0b})$ nor $C_{qV}(q,\dot{q},V^b_{0b})$ can be computed separately by the Newton-Euler algorithm. This is due to the fact that their forms are not unique \cite{Gravdahl2014}.
+
+%Note that the last two terms in the left-hand side of \eqref{eq:HEADS_lagrange_dynamics_indirect} represent the contribution due to the vehicle motion. If $V^{b}_{0b}(t) = \dot{V}^{b}_{0b}(t) = 0$, \eqref{eq:HEADS_lagrange_dynamics_indirect} is equivalent to the usual dynamic equation for a manipulator on a \textit{fixed} base.
+%
+%The \textit{Newton-Euler} algorithm is an iterative method that is useful for computing the inverse/direct dynamics problem for \eqref{eq:HEADS_lagrange_dynamics_indirect}, as well as for the computation of some matrices and individual terms of  \eqref{eq:HEADS_lagrange_dynamics_indirect}.
+%%
+%The version of the Newton-Euler algorithm described in \cite{Reis2018} can be used to perform these computations in an efficient and general form, for the case of a general mechanism composed of $n$ $1$-DOF joints and installed on a moving base.

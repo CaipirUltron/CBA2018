@@ -1,0 +1,128 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introdução}
+\label{sec:intro}
+
+%Line of sight (LOS) stabilization is a common and challenging problem in the
+%control literature. Inertially stabilized platforms (ISP) are widely used for 
+%payload stabilization and tracking applications, when a sensor must accurately 
+%point to a target in a dynamic environment.
+%
+Estabilização da linha de visada (LOS) é um problema comum na literatura de controle.
+Plataformas inerciais (do inglês {\it Inertial Stabilization Platform} - ISP) são utilizadas para estabilização de cargas em aplicações de estabilização e rastreamento, quando um sensor precisa ser estabilizado e/ou apontado de forma precisa em um ambiente dinâmico.
+%
+%Some examples are cameras for aerial surveying and entertainment industry 
+%\cite{Hurak2009}, long-range sensors on vehicles \cite{Debruin2008}, military applications \cite{Kazemy2007} and thermal cameras for oil spill 
+%detection \cite{skjelten2011ship}.
+%
+Alguns exemplos são: câmeras para vigilância aérea e para a indústria de entretenimento \cite{Hurak2009}, sensores de longo alcance para veículos \cite{Debruin2008}, aplicações militares \cite{Kazemy2007} e câmeras térmicas para detecção de vazamento de óleo \cite{skjelten2011ship}.
+
+%%% Direct VS Indirect Stabilization %%%
+%ISPs are usually gimbaled structures mounted on a 
+%mobile base (vehicle) with motors equipped with encoders/tachometers 
+%and a payload fixed on the last gimbal. Gyroscopes 
+%or inertial navigation systems (INS) are employed to close the control loop by 
+%either measuring the vehicle motion (\textit{indirect stabilization}) or 
+%directly measuring the payload motion (\textit{direct stabilization}) 
+%\cite{Kennedy2003}.
+%
+ISPs são geralmente compostas por gimbals concêntricos montados em uma base móvel (veículo) equipadas com motores e encoders/tacômetros com uma carga fixa no último gimbal.
+%
+Giroscópios ou sistemas de navegação inercial (do inglês {\it Inertial Navigation System} - INS) são usados para medir o movimento do veículo (\textit{estabilização indireta}) ou medir diretamente o movimento da carga (\textit{estabilização indireta}).
+
+%Typically, it is not possible to use state-of-the-art inertial sensor 
+%technology in a direct configuration, due to weight and size limitations, which are irrelevant for the indirect method, specially for applications in large vehicles, such as a ship.
+%%
+%For the indirect method, the estimation of the payload motion from the vehicle motion and joint encoders measurements is required and may be affected by several sources of errors, such as ISP geometric uncertainty, encoder precision and stiffness of the gimbals \cite{Kennedy2003}.
+%%
+%Naturally, these errors may lead to unsatisfactory performance when applying 
+%model-based controllers for LOS stabilization and tracking.
+%
+Tipicamente, não é possível utilizar sensores de última geração em configuração direta devido à limitações de tamanho e carga da ISP.
+%
+Em geral, tais limitações inexistem na configuração indireta, especialmente em aplicações com grandes veículos, como navios. 
+%
+Porém, neste método é necessário realizar a estimação do movimento da carga a partir do movimento medido do veículo e da ISP. Esta estimativa será afetada por diversas fontes de erros, como incerteza paramétrica, precisão dos encoders e rigidez da estrutura mecânica da plataforma, o que pode resultar em níveis de performance insuficientes ao se utilizar controladores baseados na linearização do modelo do sistema \cite{Kennedy2003}.
+
+%To ensure satisfactory control performance and develop trustworthy models
+%of real robotic systems, a precise knowledge of the geometric and dynamic parameters of the system is required.
+%%
+%Geometric parameters ($\Pi_g$) influence the ISP Jacobian matrix and are composed of the joint axes vectors and the distances between joints.
+%%
+%Dynamic parameters ($\Pi_d$) influence the mass, Coriolis, and gravity matrices
+%and are composed each link mass, inertia and center of mass position.
+%
+Para garantir resultados satisfatórios e desenvolver modelos confiáveis para o sistema real, é necessário um conhecimento preciso dos parâmetros do sistema.
+%
+Parâmetros geométricos ($\Pi_g$) influenciam o Jacobiano da ISP e consistem nas componentes dos vectores de eixo e distâncias entre as juntas.
+%
+Parâmetros dinâmicos ($\Pi_d$) influenciam as matrizes de massa, Coriolis e os termos de gravidade da equação dinâmica, e são compostos por massas, componentes de inércia e posição dos centros de massa dos elos.
+
+%Parameter identification consists in modeling, design of sufficiently rich
+%trajectories, data acquisition and processing, parameter estimation and model
+%validation.
+%%
+%Most of the ongoing research on parameter identification is devoted to the
+%estimation of dynamic parameters.
+%%
+%In~\cite{Swevers2007dynamic,Calanca2011mimo}, finite Fourier series are used to
+%generate trajectories capable of exciting every parameter, while identification
+%is based on weighted least-squares.
+%%
+%In~\cite{Wu2012closed}, trajectories are generated using modified Fourier series
+%and the identification is based on a maximum likelihood approach.
+%%
+%Recently, an algorithm based on linear matrix inequalities (LMIs) with
+%trajectories generated by finite Fourier series was proposed to identify the dynamic parameters of the da Vinci research kit robotic arms~\cite{Fontanelli2017modelling}.
+%%
+%This approach also guarantees the physical feasibility of the identified
+%parameters, a property that is not considered in least-squares and likelihood
+%methods.
+%
+%A {\it identificação de parâmetros} consiste na modelagem, projeto de trajetórias suficientemente ricas, aquisição de dados e processamento, estimação paramétrica e validação de modelos.
+%
+Grande parte da pesquisa atual em {\it identificação paramétrica} está voltada para a estimação dos parâmetros dinâmicos.
+%
+Em~\cite{Swevers2007dynamic,Calanca2011mimo}, séries de Fourier finitas são utilizadas para geração de trajetórias suficientemente ricas para excitar cada parâmetro, e a identificação é baseada no método dos mínimos quadrados.
+%
+Em~\cite{Wu2012closed}, as trajetórias são geradas utilizando séries de Fourier modificadas e a identificação é baseada no método de maximização da verossimilhança (maximum likelihood).
+%
+Recentemente, um algoritmo baseado em desigualdades lineares matriciais (LMIs) com trajetórias geradas por séries de Fourier finitas foi proposto para identificar os parâmetros dinâmicos para o kit de robótica cirúrgica {\it da Vinci}~\cite{Fontanelli2017modelling}.
+%
+Este método também garante a viabilidade física dos parâmetros identificados, propriedade que não é considerada nos métodos anteriores.
+
+%In contrast to these works, we focus on the identification of geometric parameters.
+%%
+%Although important, the impact in system performance due to the uncertainty of
+%dynamic parameters can usually be mitigated by an appropriate choice of control
+%architecture and control tuning.
+%%
+%In~\cite{Reis2018}, it is shown that even in the presence of large parameter
+%uncertainties, a Computed Torque plus PID (CTPID) controller guarantees satisfactory performance.
+%%
+%On the other hand, uncertainty in geometric parameters can lead to great amount of bias in the tracking performance.
+%
+Em contraste com tais trabalhos, focamos na identificação dos parâmetros geométricos. Apesar de importante, o impacto na performance devido à incerteza nos parâmetros dinâmicos normalmente pode ser reduzida por uma escolha apropriada da arquitetura e por uma boa sintonia do controlador.
+%
+Em~\cite{Reis2018}, mostra-se que mesmo sob consideráveis incertezas paramétricas, um controlador por torque computado com PID garante um desempenho satisfatório.
+%
+Por outro lado, a incerteza nos parâmetros geométricos pode causar grandes níveis de bias.
+
+%In this work, we propose an identification procedure for the joint axes vectors and an indirect stabilization cascade control topology. The inner loop is a computed torque control in joint space to compensate the platform nonlinear dynamics, reducing the joint dynamics to a disturbed double integrator.
+%%
+%The outer loop attempts to cancel further kinematic disturbances and a PID controller in operational space ensures LOS tracking.
+%%
+%This control architecture is robust to parameter uncertainties and it differs
+%from the one proposed in~\cite{Reis2018}, providing a simpler and more
+%complete robustness analysis with respect to parameter uncertainty.
+%%
+%Simulations in Gazebo using the Rock robotics framework and a customized user interface based on Unity show the robustness and effectiveness of the proposed control and the identification algorithm, which is able to accurately find the joint axes even in the presence of large measurement noise.
+%
+Neste trabalho, propomos um método de identificação para os vetores de eixos das juntas e uma topologia de controle em cascata para estabilização e rastreamento. A malha de controle interna é um controlador por torque computado no espaço das juntas, responsável por compensar a dinâmica não-linear da planta, reduzindo-a a um duplo integrador com perturbação.
+%
+A malha externa procura cancelar distúrbios cinemáticos e utiliza um controle PID no espaço operacional para garantir o rastreamento.
+%
+Esta arquitetura é robusta a incertezas paramétricas e difere da proposta em~\cite{Reis2018} por fornecer uma análise mais simples e completa em relação à robustez do controle à incertezas paramétricas.
+%
+Simulações em Gazebo utilizando o ambiente de simulação Rock e uma interface de usuário baseada em Unity demonstram a robustez e performance do algoritmo de controle e do método de identificação propostos.
+ 

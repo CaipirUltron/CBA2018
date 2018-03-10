@@ -1,0 +1,60 @@
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out if you need a4paper
+
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4 paper
+
+\IEEEoverridecommandlockouts                              % This command is only needed if
+                                                          % you want to use the \thanks command
+
+\overrideIEEEmargins                                      % Needed to meet printer requirements.
+
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+\include{preamble}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{\LARGE \bf Identification and Feedback Linearization Control of a 3-DOF Inertial Platform for Line of Sight Stabilization and Tracking}
+
+\author{Matheus F. Reis, Jo\~ao C. Monteiro, Guilherme P. S. Carvalho, Alex F. Neves and Alessandro J. Peixoto% <-this % stops a space
+%\thanks{*This work was supported by Repsol Sinopec Brasil under the ANP-Brazil R\&D program (project reference number 20005-5)}% <-this % stops a space
+%
+%\thanks{The authors are with the Electrical Engineering Department. of COPPE/UFRJ, Rio de Janeiro, Brazil
+%{\tt\small (matheus.ferreira.reis @gmail.com).}}}
+%
+\thanks{*The authors are with the Electrical Engineering Department of COPPE/UFRJ, Rio de Janeiro, Brazil {\tt\small \{matheus.ferreira.reis, guilherme.ps.carvalho, alexfneves\}@gmail.com, jcmonteiro@poli.ufrj.br, jacoud@coep.ufrj.br.}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+
+\input{abstract}
+\input{introduction}
+\input{modeling_NE}
+\input{problem_formulation}
+\input{control}
+\input{identification}
+\input{simulations}
+\input{conclusion}
+\input{acknowledgements}
+
+%A conclusion section is not required. Although a conclusion may review the main points of the paper, do not replicate the abstract as the conclusion. A conclusion might elaborate on the importance of the work or suggest applications and extensions.
+
+\addtolength{\textheight}{-12cm}  % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{APPENDIX}
+%
+%\section*{ACKNOWLEDGMENT}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{IEEEtran}
+\bibliography{IROS2018}
+
+\end{document} 

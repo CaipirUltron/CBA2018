@@ -1,0 +1,104 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Formulação do Problema}
+\label{sec:problem_formulation}
+
+%Consider a ISP on a vessel with dynamics given by \eqref{eq:HEADS_dynamics}:
+%
+Considere uma ISP em um veículo, cuja dinâmica é descrita por \eqref{eq:HEADS_dynamics}:
+%
+\begin{align}
+M_{qq} \, \ddot{q} + \tau_{d} = u(t) \,,
+\label{eq:HEADS_lagrange_dynamics_indirect}
+\end{align}
+%
+%where $u(t)=\tau_{q}$ is the control signal and $\tau_{d} = C_{qq} \, \dot{q} + G_{q} + M_{qV} \, \dot{V}^b_{0b} + C_{qV} \, V^b_{0b}$ is a nonlinear disturbance.
+%
+onde $u(t)=\tau_{q}$ é o sinal de controle e $\tau_{d} = C_{qq} \, \dot{q} + G_{q} + M_{qV} \, \dot{V}^b_{0b} + C_{qV} \, V^b_{0b}$ é um distúrbio não-linear.
+%
+%The mass matrix $M_{qq}$ and the disturbance $\tau_d$ can be computed by the \textit{Newton-Euler} algorithm described in \sref{sec:dynamic_model} and are depend on the system parameters $\Pi_{g}$, $\Pi_{d}$.
+%
+A matriz de massa $M_{qq}$ e o distúrbio $\tau_d$ podem ser calculados numericamente através do algoritmo de \textit{Newton-Euler} descrito na \sref{sec:dynamic_model} e são, em geral, dependentes de todos os parâmetros do sistema ($\Pi_{g}$ e $\Pi_{d}$).
+
+%In \textit{indirect} stabilization approaches, state-of-the-art inertial sensors allow high precision measurements of the vehicle motion.
+%%
+%Thus, if the ISP geometric parameters $\Pi_g$ are \textit{accurately} known, \algref{alg:forward_propagation} can be used to compute $\eta_{c}$, $V^{c}_{0c}$ and $\dot{V}^{c}_{0c}$ from $q$, $\dot{q}$, $\ddot{q}$ and $\eta_b$, $V^{b}_{0b}$ and $\dot{V}^{b}_{0b}$.
+%%
+%Since the fabrication and assembly process of the ISP structure may contain uncertainties about its precise geometric parameters, an accurate \textit{identification} process is required to guarantee a small amount of error when estimating the camera motion.
+
+Em configuração \textit{indireta}, sensores inerciais de última geração permitem a medição precisa do movimento do veículo.
+%
+Portanto, se os parâmetros geométricos $\Pi_g$ são bem conhecidos, o \algref{alg:forward_propagation} pode ser utilizado para o cálculo de $\eta_{c}$, $V^{c}_{0c}$ e $\dot{V}^{c}_{0c}$ a partir de $q$, $\dot{q}$, $\ddot{q}$ e $\eta_b$, $V^{b}_{0b}$, $\dot{V}^{b}_{0b}$.
+
+%Since the matrices $M_{qV}$ and $ C_{qV}$ are well {\em known}, $d_V$ can be compensated in the control even when only an  estimate for $V^{b}_{0b}$ and $\dot{V}^{b}_{0b}$ is provided.
+
+%Comparing \eqref{eq:HEADS_lagrange_dynamics_indirect} with the usual dynamics of robotic systems, the vehicle motion introduces    an
+%additional contribution ($d_V$) on the joint torques, which depends on the vehicle velocities and accelerations.
+
+%Note that \eqref{eq:HEADS_lagrange_dynamics_indirect} is suitable for the indirect stabilization approach, since $V^{b}_{0b}$ and $\dot{V}^{b}_{0b}$ appears explicitly. In particular, the 3 DOF ISP dynamic equations are obtained by computing the system dynamic matrices of \eqref{eq:HEADS_lagrange_dynamics_indirect} for $n=3$.% and for the joint twists defined in \eqref{eq:link_body_jacobian}.
+
+%The \textit{control objective} is to find a control signal $u(t)$ that ensures that the norm of the camera RPY orientation error
+%
+O \textit{objetivo de controle} é encontrar o sinal de controle $u(t)$ que assegura que a norma do erro de orientação absoluta da câmera
+%
+$\widetilde{\eta}_{c_2}(t) = \eta_{d_2}(t) - \eta_{c_2}(t)$
+%
+converge para um conjunto residual:
+%
+% $\mathbb{\beta} := \{ \norm{\widetilde{\eta}_{c_2}(t)} < \rho \mid t \rightarrow \infty \}$,
+%
+\begin{equation}
+\mathbb{\beta} := \{ \norm{\widetilde{\eta}_{c_2}(t)} < \rho \mid t \rightarrow \infty\} \,,
+\label{eq:op_error_bound}
+\end{equation}
+%
+%where $\rho>0$ is an appropriate constant so that the real camera orientation gets sufficiently close to the desired value.
+%
+onde $\rho>0$ é uma constante apropriada tal que a orientação absoluta da câmera aproxima-se suficientemente de seu valor desejado.
+%with acceptable  offset error (\textit{bias}) and residual oscillations (\textit{jitter}).% as possible.
+
+%Let $\mathbf{E}_{t}$ be the target frame with \textit{given} position $p_{0t}$, velocity $\dot{p}_{0t}$, and acceleration $\ddot{p}_{0t}$. Defining $p_{ct} = p_{0t} - p_{0c} = \left[\begin{array}{ccc} \!\!\! x_{ct} \!\!\!&\!\!\! y_{ct} \!\!\!&\!\!\! z_{ct} \!\!\! \end{array}\right]^{\mathsf{T}}$,
+%and supposing that the camera's \textit{optical axis} is aligned with $x^c_c$,
+%
+Seja $\mathbf{E}_{t}$ o frame alvo com posição, velocidade e aceleração  desejadas $p_{0t}$, $\dot{p}_{0t}$ e $\ddot{p}_{0t}$.
+Definindo $p_{ct} = p_{0t} - p_{0c} = \left[\begin{array}{ccc} \!\!\! x_{ct} \!\!\!&\!\!\! y_{ct} \!\!\!&\!\!\! z_{ct} \!\!\! \end{array}\right]^{\mathsf{T}}$ e
+supondo o \textit{eixo óptico} da câmera alinhado com $x^c_c$,
+%
+%\begin{equation}
+%p_{0t} = p_{0c} + R_{0c}(\eta_{c_2}) \, p^c_{ct} \,,
+%\label{eq:p_et}
+%\end{equation}
+%
+%where $p_{0c}$ can be found by \eqref{eq:fwd_kin} with $\mathbf{E}_{i} = \mathbf{E}_{c}$.
+%
+%the camera RPY orientation that ensures the correct \textit{pointing requirement}
+a orientação da câmera em coordenadas RPY que assegura a linha de visada correta
+%
+%
+$p^c_{ct} = \|p_{0t} - p_{0c}\| \, x^c_c$
+%
+%considering that the roll motion of the camera should be null by requirement, we find:
+%
+é:
+%
+\begin{equation}
+\eta_{d_2} =
+\left[\begin{array}{c}
+ 0 \\
+atan2(-z_{ct} ,\, \sqrt{x^2_{ct} + y^2_{ct}}) \\
+atan2(y_{ct} ,\, x_{ct})
+\end{array} \right] \,,
+\label{eq:ref_RPY}
+\end{equation}
+%
+%where $atan2(.)$ is the two-argument inverse tangent function.
+%
+onde $atan2(.)$ é a função arco-tangente dupla.
+
+%Define also $\dot{\eta}_{d_2}$ and $\ddot{\eta}_{d_2}$ after \eqref{eq:ref_RPY} in time.
+%
+Defina também as derivadas temporais de \eqref{eq:ref_RPY}, $\dot{\eta}_{d_2}$ e $\ddot{\eta}_{d_2}$.
+%
+%For mobile target tracking, these variables will be functions of $\dot{p}_{0t}(t)$ and $\ddot{p}_{0t}(t)$, which are considered to be given, and also of the inertial linear velocity $\dot{p}_{0c}$ and acceleration $\ddot{p}_{0c}$, which are found by \eqref{eq:body_velocity} (with $i = c$) and its time derivative, after obtaining $v^c_{0c}$ and $\dot{v}^c_{0c}$ by \algref{alg:forward_propagation}.
+%
+Em aplicações de rastreamento de um alvo móvel, estas variáveis são funções de $\dot{p}_{0t}(t)$ e $\ddot{p}_{0t}(t)$ (consideradas conhecidas), e também da velocidade e aceleração inercial da câmera $\dot{p}_{0c}$ e $\ddot{p}_{0c}$, encontradas através de \eqref{eq:body_velocity} (com $i = c$) e sua derivada temporal, após a obtenção de $v^c_{0c}$ e $\dot{v}^c_{0c}$ através do \algref{alg:forward_propagation}.
+

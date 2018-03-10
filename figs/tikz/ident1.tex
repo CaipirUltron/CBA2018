@@ -1,0 +1,69 @@
+\documentclass[tikz]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{grffile}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{plotmarks, spy}
+\usetikzlibrary{arrows.meta}
+\usepgfplotslibrary{patchplots}
+\usepackage{amsmath}
+
+\def\axismax{1}
+
+\begin{document}
+\begin{tikzpicture}[
+    >=latex,
+    spy using outlines={circle, magnification=2, connect spies}
+]
+
+\begin{axis}[%
+width=5cm,
+height=5.8cm,
+scale only axis,
+xmin=-\axismax,
+xmax=\axismax,
+ymin=-\axismax,
+ymax=\axismax,
+zmin=-\axismax,
+zmax=\axismax,
+view={30}{35},
+axis background/.style={fill=white},
+axis lines=none,
+ticks=none,
+]
+\addplot3[%
+    surf,
+    fill=white,
+    faceted color=black!20,
+    z buffer=sort,
+    mesh/rows=26
+]
+    table[point meta=\thisrow{c}] {data/lower-half-1.tsv};
+\addplot3[%
+    surf,
+    fill=white,
+    faceted color=black!80,
+    z buffer=sort,
+    mesh/rows=26
+]
+    table[point meta=\thisrow{c}] {data/ident1-7.tsv};
+    \begin{scope}
+        \coordinate (spypoint) at (0,0,0.9);
+        \spy[black,size=2cm] on (spypoint) in node [fill=white] at (6,4.5);
+    \end{scope}
+\addplot3 [draw=none, mark=o, mark options={solid, green}]
+ table[] {data/ident1-1.tsv};
+ \addplot3 [draw=none, mark=x, mark options={solid, red}]
+ table[] {data/ident1-2.tsv};
+\draw [->,black!80] (axis cs:0,0,1) -- (axis cs:0,0,1.8)
+    node [anchor=north west] {$z$};
+\draw [->,black!80] (axis cs:0,-1,0) -- (axis cs:0,-1.8,0)
+    node [anchor=south east] {$x$};
+\draw [->,black!80] (axis cs:1,0,0) -- (axis cs:1.4,0,0)
+    node [anchor=north] {$y$};
+\draw [-, black!10] (axis cs:1,0,0) -- (axis cs:0,0,0) -- (axis cs:0,-1,0)
+(axis cs:0,0,0) -- (axis cs:0,0,.4);
+\end{axis}
+\end{tikzpicture}%
+\end{document}

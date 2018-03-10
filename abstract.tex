@@ -1,0 +1,40 @@
+%% Abstract section
+\twocolumn[
+\maketitle
+%\selectlanguage{english}
+
+\begin{abstract}
+The majority of works in line of sight (LOS) stabilization and tracking using inertially stabilized platforms (ISP) apply simple linear controllers to achieve the required performance. Commonly, linear models are employed to describe the relationship between torque and position of the ISP joints, such as a double integrator with an inertia gain.
+%
+However, high-accuracy and fast motion applications may require more complex control techniques, demanding accurate dynamic and kinematic models, and system \textit{identification} procedures.
+%
+In this work, we propose a cascade control topology for stabilization and tracking of the line of sight of a camera in a 3-DOF ISP installed on a vessel. Using measurements from joint encoders and an inertial navigation system (INS) fixed on the vessel, an inner controller cancels the \textit{dynamic} disturbances acting on the ISP joints, while an outer kinematic controller ensures LOS tracking.
+%
+For this type of controller, the ISP joint axes are critical parameters with respect to the tracking performance, since their uncertainty introduce bias in the control response. For this reason, a simple, yet efficient identification procedure for the joint axes is proposed.
+%
+Simulations in Gazebo using the Rock robotics framework and a Unity-based viewer show the efficiency of this procedure and the performance of the proposed cascade controller for LOS stabilization and tracking.
+\end{abstract}
+
+\keywords{Line of sight stabilization, inertial platform, computed torque control.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\selectlanguage{brazil}
+
+\begin{abstract}
+A maioria dos trabalhos em estabilização e rastreamento da linha de visada (LOS) com plataformas inerciais (ISPs) utilizam simples controladores lineares para atingir o nível de performance exigido. Geralmente, modelos lineares são suficientes para descrever a relação ângulo-torque para as juntas da plataforma, tais como um simples duplo integrador.
+%
+Porém, em operações que requerem alta velocidade e/ou acurácia, técnicas de controle mais complexas podem ser necessárias. Tais técnicas em geral demandam modelos mais realistas para o sistema considerado, bem como procedimentos para a identificação de parâmetros destes modelos.
+%
+Neste trabalho, é proposta uma topologia de controle em cascata para estabilização e rastreamento da linha de visada de uma câmera, utilizando uma plataforma inercial de 3 eixos instalada em um navio.
+%
+Utilizando medições de encoders localizados nas juntas e um sistema de navegação inercial (INS) acoplado ao navio, um controlador interno cancela perturbações dinâmicas devido ao movimento do navio, enquanto um controlador cinemático externo garante o rastreamento da LOS.
+%
+Neste abordagem, os eixos das juntas são parâmetros críticos em relação ao desempenho de rastreamento, pois sua incerteza introduz um bias em relação a referência desejada.
+%
+Por isso, um simples e eficiente procedimento de identificação é proposto.
+%
+Simulações em Gazebo com o ambiente de simulação Rock e um visualizador baseado em Unity mostram a eficiência do procedimento e o desempenho do controlador proposto.
+\end{abstract}
+
+\keywords{Estabilização da linha de visada, plataformas inerciais, controle por torque computado.}
+]
+\selectlanguage{brazil}

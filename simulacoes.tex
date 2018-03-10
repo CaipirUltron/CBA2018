@@ -1,0 +1,238 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Resultados das Simulações}
+\label{sec:simulation_results}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Identificação dos Eixos das Juntas}
+
+%Following the procedure described in \sref{sec:identification}, the ISP is
+%placed on its zero configuration and each joint is moved individually by steps
+%of 10 degrees, ranging from -60 to 60 degrees, as show in
+%\fref{fig:ident.joint.steps}.
+%
+Seguindo o método descrito na \sref{sec:identification}, a ISP é inicialmente 
+posicionada em sua \textit{home-position} ($q=\left[\, 0 \,\,\, 0 \,\,\, 0 \,\right]^\mathbf{T}$), 
+e cada junta é movida individualmente em passos de $10$º, de $-60$º até $60$º, como ilustrado em 
+\fref{fig:ident.joint.steps}.
+%
+%To emulate a low precision IMU attached to the last link, a white noise with
+%zero mean and 1 degree of standard deviation is added to the roll, pitch, and
+%yaw measurements of the platform orientation.
+%
+Para emular uma IMU de baixa precisão instalada no último gimbal, um ruído branco 
+de média zero e $1$º de desvio padrão foi adicionado às medições de roll, pitch e yaw.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{figs/tikz/identification}
+    \caption{Ângulos das juntas durante o procedimento de identificação.}
+    \label{fig:ident.joint.steps}
+\end{figure}
+
+%Without any prior knowledge of the joint axes vectors $h_i^{i-1}$, the
+%identification algorithm produces estimates that equal the real values up
+%to the fourth decimal place.
+%
+Sem nenhum conhecimento a priori sobre os vetores de eixos das juntas $h_i^{i-1}$, 
+o algoritmo para identificação produz estimativas idênticas aos valores reais até a quarta casa decimal.
+%
+%This similarity correspond to a deviation of less than 0.01 degrees from the
+%real vectors.
+%
+Tal similaridade corresponde a um desvio menor que $0.01$º em relação aos vetores reais.
+%
+%Note that, compared to the simulated IMU noise (1 degree on each axis), the
+%identification accuracy is remarkable.
+%
+Note que, comparado à amplitude do ruído simulado para a IMU, a acurácia da identificação é notável.
+%
+%The identification data produced for the first joint $h_1^b = z_0$
+%is shown in \fref{fig:ident.joint.1}.
+%
+Os dados de identificação da primeira junta $h_1^b = z_0$ são mostrados na \fref{fig:ident.joint.1}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics{figs/tikz/ident1}
+    \vspace{-6ex}
+    \caption{Ilustração do método de identificação aplicado à 1ª junta. 
+		Em vermelho, as amostras filtradas devido à sua distância relativa à média.
+		Em verde, as amostras interiores à bola de raio $\alpha\mathrm{var}(\mathsf{H}_1)$ 
+		centrada na média. A esfera de raio $1$ denota o conjunto $\mathbb{S}^2$ de 
+		vetores unitários do $\mathbb{R}^3$.}
+		%
+		%Illustration of the identification algorithm applied to the first
+    %joint. In red, the samples that were filtered due to their distance from
+    %the mean. In green, the samples inside the ball of radius $\alpha
+    %\mathrm{var}(\mathsf{H}_1)$ around the mean. The sphere of radius 1 denotes
+    %the set $\mathbb{S}^2$ of unit vectors in $\mathbb{R}^3$.
+    \label{fig:ident.joint.1}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Controle para Estabilização e Rastreamento}
+%ISP Stabilization and Tracking Control
+
+%This section presents the results of the cascade control method for the LOS control problem.
+%
+%Esta seção apresenta os resultados do algoritmo de controle em cascata proposto.
+%
+% MATLAB Simulink$^\text{{\tiny{\circledR}}}$ models were implemented for the simulation of the dynamic model of a $3$-DOF ISP installed on a vessel, developed in \sref{sec:dynamic_model}, and for the implementation of the cascade CTPID control strategy proposed in \sref{sec:control}.
+
+%The Rock robotics framework was chosen for the simulation and practical implementation of the control software, given that it has natural real time capabilities. C++ libraries were developed for the implementation of the cascade CTPID control strategy proposed in \sref{sec:control}, and Gazebo was selected as the simulator, provided that it has a trustworthy representation of the real world and has integration with Rock \cite{watanabe2015rock}. Furthermore, a customized user interface was developed with a Unity-based viewer, shown in \fref{fig:simulator}.
+
+O software de controle foi implementado no ambiente Rock de simulação em robótica, devido ao seu suporte nativo para aplicações em tempo real. Bibliotecas em C++  foram desenvolvidas para a implementação da estratégia de controle em cascata proposta em \sref{sec:control}, e o simulador Gazebo foi escolhido devido à sua representação confiável do mundo real e possibilidade de integração com o Rock \cite{watanabe2015rock}. Além disso, uma interface de usuário personalizável foi desenvolvida, utilizando um visualizador baseado em Unity, ilustrado na \fref{fig:simulator}.
+
+\begin{figure}[!htp]
+\centering
+\includegraphics[width=0.99\columnwidth]{results/simulator}
+\caption{ISP rastreando um alvo na interface de usuário baseada em Unity. O controle proposto é executado através da integração Rock-Gazebo.}
+%ISP pointing to the target in the customized Unity-based interface. The proposed control is running in background in Rock-Gazebo.
+\label{fig:simulator}
+\end{figure}
+
+%For $\widetilde{\Pi} = 0$ in \eqref{eq:CTPID_error_equation}, if the gain matrices are diagonal, the roots of the characteristic equation for each DOF must be properly chosen.
+%
+Para $\widetilde{\Pi} = 0$ em \eqref{eq:CTPID_error_equation3}, se as matrizes de ganho forem diagonais, as raízes das equações características devem ser apropriadamente escolhidas.
+%
+%The tuning procedure consists in choosing one of the roots to be stable and sufficiently distant from the origin, while the other two are chosen to match the poles of a desired second order characteristic polynomial.
+%
+O procedimento de ajuste dos ganhos consiste em escolher três raízes estáveis, uma delas suficientemente distante da origem e as outras duas sendo correspondentes aos polos de um polinômio característico de segunda ordem apropriado.
+%
+%The controller gains were tuned to have a closed-loop characteristic equation with a distant pole in $-10 \, rad/s$, damping ratio of $1.1$ and natural frequency of $4 \, rad/s$ for the remaining poles. 
+%
+O pólo distante foi escolhido em $-10 \, rad/s$, e o polinômio característico escolhido possui coef. de amortecimento igual $1.1$ e frequência natural de $4 \, rad/s$.
+
+%In all simulations, the target is fixed at $p_{0t} = \mat{100 & 100 & 0}^\mathsf{T}$.
+Em todas as simulações, o alvo permanece fixo em $p_{0t} = \mat{100 & 100 & 0}^\mathsf{T}$.
+%
+%However, the trajectories passed to the controller are obtained from the outputs $p_{0t_f}$, $\dot{p}_{0t_f}$ and $\ddot{p}_{0t_f}$ of a second-order linear filter for $p_{0t}(t)$, tuned for an overdamped response with approximately $5$ seconds of settling time and initial condition on a distant point in the direction of $x^c_c(0)$.
+%
+Entretanto, as trajetórias de referência enviadas ao controlador são obtidas através das saídas $p_{0t_f}$, $\dot{p}_{0t_f}$ e $\ddot{p}_{0t_f}$ de um filtro linear de segunda ordem para $p_{0t}(t)$, ajustado para uma resposta sobre-amortecida com aproximadamente $5$ segundos de tempo de assentamento e condição inicial em um ponto distante na direção de $x^c_c(0)$.
+%
+%This allows a smooth LOS reference transition for the controllers, avoiding unwanted peaks in the control signal.
+
+%The vessel motion data, represented by the vehicle variables $\eta_{b}$, $V^{b}_{0b}$ and $\dot{V}^{b}_{0b}$ were obtained from the simulation of a vessel subject to Jonswap spectrum waves with 200 harmonics, $3$m height, $10$s time period, and acting on the longitudinal axis of the vessel.
+
+Os dados de movimento do veículo, representados pelas variáveis $\eta_{b}$, $V^{b}_{0b}$ e $\dot{V}^{b}_{0b}$ foram obtidos através da simulação de um navio sujeito à ondas de espectro Jonswap com $200$ harmônicos, $3$ m de altura e $10$ s de período agindo no eixo longitudinal do navio.
+
+%The joint encoders and the INS were modeled considering hardware effects such as resolution, bias, and noise. The encoders measure the joints positions $q$, with which it is possible to \textit{estimate} $\dot{q}$.
+%
+Os encoders e a INS foram simulados considerando efeitos de hardware como resolução, bias e ruído. Os encoders medem os ângulos das juntas $q$, através dos quais é possível {\it estimar} $\dot{q}$.
+%
+%Motor/driver electromechanical dynamics and friction were not taken into account, but a saturation of $\pm 12.2 \, Nm$ in each joint motor was considered.
+%
+A dinâmica eletromecânica dos motores e drivers, bem como atrito, não foram simulados. Porém, foi considerada uma saturação de $\pm 12.2 \, Nm$ em cada motor.
+
+%The INS measures $\eta_b$, $V^b_{0b}$, $\dot{V}^b_{0b}$, and it is possible to compute an estimate of variables of interest $\eta_{c}$, $\dot{\eta}_{c}$ and $\ddot{\eta}_{c}$ by \algref{alg:forward_propagation}. These estimations are used not only to compute the correct LOS references, but also in the outer control law \eqref{eq:outer_ctrl_law}.
+%
+A INS mede as variáveis $\eta_b$, $V^b_{0b}$, $\dot{V}^b_{0b}$, com as quais é possível calcular uma estimativa das variáveis de interesse $\eta_{c}$, $\dot{\eta}_{c}$ e $\ddot{\eta}_{c}$ através do \algref{alg:forward_propagation}. Estas estimativas são usadas não apenas para calcular a referência correta de LOS, mas também na lei de controle externa em \eqref{eq:outer_ctrl_law}.
+%
+%Since the joint encoders are not ideal and only the joint axes $\widehat{h}^i_{i+1}$ are identified by the algorithm proposed in \sref{sec:identification}, some bias error on $\eta_{c}$, $\dot{\eta}_{c}$, $\ddot{\eta}_{c}$ is expected.
+%
+Já que os encoders não são ideais e somente os eixos das juntas $\widehat{h}^i_{i+1}$ são identificados, é esperado algum nível de bias nas estimativas de $\eta_{c}$, $\dot{\eta}_{c}$ e $\ddot{\eta}_{c}$.
+
+{\renewcommand{\arraystretch}{1.5}%
+\begin{table}[!htb]
+\caption{Parâmetros geométricos e dinâmicos, em unidades SI.}
+\centering
+%\caption{Kinematic and dynamic model parameters.}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{c|ccc|ccc|ccc}
+\hline
+\multirow{2}{*}{Parâmetro} & \multicolumn{3}{c|}{$i=1$} & \multicolumn{3}{c|}{$i=2$} & \multicolumn{3}{c}{$i=3$} \\ \cline{2-10}
+                           & $x$     & $y$    & $z$     & $x$      & $y$    & $z$    & $x$    & $y$    & $z$      \\ \hline \hline
+$p^{i}_{i\bar{i}}$         & 0.006 & 0.023 & 0.326 & -0.094 & 0.006 & 0.059 & 0.336  & 0.006 & -0.023 \\
+$p^{i-1}_{i-1\,,i}$ 				 & 0.3   & 0    & 0    & 0      & 0     & 0.436 & -0.254 & 0     & 0      \\
+%$h^{i-1}_i$                & 0.0178  & -0.0171 & 0.9997 & -0.0171 & 0.9997 & 0.0174  & 0.9997 & 0.0174 & -0.0175        \\
+$I^{\bar{i}}_{\bar{i}}$    & 2.42    & 0.58    & 1.93     & 1.12     & 0.92    & 0.88   & 0.54   & 0.93   &  0.86  \\ \hline
+%$h^{i-1}_i$              & \multicolumn{3}{c|}{$z_0$}   & \multicolumn{3}{c|}{$y_0$}  & \multicolumn{3}{c}{$x_0$}    \\ \hline
+$m_i$                      & \multicolumn{3}{c|}{18.9}    & \multicolumn{3}{c|}{21}     & \multicolumn{3}{c}{26.5}    \\ \hline
+\end{tabular}%
+}
+\label{table:ISP_parameters}
+\end{table}
+}
+%
+A \tref{table:ISP_parameters} contém os parâmetros geométricos e dinâmicos usados nas simulações (considere $i = 0$ como $i = b$).
+%
+%The \textit{real} joint axis are considered as $h^{b}_1 \!=\! z_0$, $h^{1}_2 \!=\! y_0$ and $h^{2}_3 \!=\! x_0$. Also, we have $p^3_{3c} = \mat{0.555 & 0 & 0.014}^\mathsf{T}$, and the inertia tensor represented in $\mathbf{E}_{i}$ can be computed from the \textit{Huygens-Steiner theorem} as $I^{i}_{i} = I^{\bar{i}}_{\bar{i}} - m_i \, (\widehat{p}^{i}_{i\bar{i}})^2$.
+%
+Os eixos de junta \textit{reais} são $h^{b}_1 \!=\! z_0$, $h^{1}_2 \!=\! y_0$ e $h^{2}_3 \!=\! x_0$, os vetores de base canônicos do $\mathbb{R}^3$.
+Além disso, tem-se $p^3_{3c} = \mat{0.555 & 0 & 0.014}^\mathsf{T}$, e o tensor de inércia representado em $\mathbf{E}_{i}$ pode ser calculado usando o {\it teorema dos eixos paralelos}, com $I^{i}_{i} = I^{\bar{i}}_{\bar{i}} - m_i \, (\widehat{p}^{i}_{i\bar{i}})^2$.
+%
+%$p^s_{sc} = \mat{0.405 & 0 & 0.176}^\mathsf{T}$, and $R_{3c} = R_{sc} = \mathbf{I}_3$, where $p^s_{sc}$ and $R_{sc}$ are used only in the direct stabilization case.
+%
+%These parameters were obtained from the mechanical design of a 3-DOF ISP currently being developed by a collaboration among several groups, including the authors laboratory (LEAD/COPPE/UFRJ).
+%
+Estes parâmetros foram obtidos a partir do projeto mecânico de uma ISP de 3 eixos sendo atualmente desenvolvida através de uma colaboração entre diversos grupos, incluindo o laboratório de trabalho dos autores (LEAD/COPPE/UFRJ).
+
+%The estimation error on the axis vectors $\widehat{h}^{i-1}_i$ computed in \sref{sec:identification} is represented by an offset RPY rotation matrix $R_{off}$ with $\alpha = 0.01^\circ$ of angular error in each joint.
+%
+O erro de estimação nos eixos $\widehat{h}^{i-1}_i$ está representado como uma matriz de rotação RPY $R_{off}$ com $\alpha = 0.01^\circ$ de erro angular em cada junta.
+%
+%is given by the offset RPY rotation matrix $R_{off}$ with $\alpha = 1\degree$ of assembly misalignment in roll, pitch and yaw axes for each joint.
+%The inertia tensor represented in $\mathbf{E}_{i}$ can be computed by the \textit{Huygens-Steiner theorem} as $I^{i}_{i} = I^{\bar{i}}_{\bar{i}} - m_i \, (\widehat{p}^{i}_{i\bar{i}})^2$.
+%
+%For the proposed cascade controller, matrices and terms in \eqref{eq:inner_ctrl_law} and \eqref{eq:outer_ctrl_law} were computed by \algref{alg:forward_propagation} and \algref{alg:backward_propagation}.
+%
+Para o controlador em cascata proposto, as matrizes e termos de \eqref{eq:inner_ctrl_law} e \eqref{eq:outer_ctrl_law} foram calculados pelos \textbf{Algoritmos} {\bf \ref{alg:forward_propagation}} e {\bf \ref{alg:backward_propagation}}.
+%
+%The values for the nominal parameters used by the controller were set as the real values of
+%in Table \ref{table:ISP_parameters} with a percentage of error.
+%
+Os valores dos parâmetros nominais usados no controle são dados pelos valores na Tabela \ref{table:ISP_parameters} com algum erro percentual.
+%
+%$m_i$, $I^{\bar{i}}_{\bar{i}}$, $p^{i}_{i\bar{i}}$, $p^{i-1}_{i-1,i}$
+%and $\alpha$ in $R_{off}$ with a percentage of error.
+
+%Figure \ref{fig:simulation} shows the transitory and steady state results of the proposed control scheme for 20\% of error in the dynamic parameters $\Pi_{d}$, 50\% of error in the joint distances $p^{i-1}_{i-1,i}$ ($i=1,2,3$) and a small error of $0.01^\circ$ on the joint axes, due to the precision limits of the proposed identification algorithm.
+%
+A Figura \ref{fig:simulation} mostra o resultado transitório e estacionário obtido para 20\% de erro nos parâmetros dinâmicos $\Pi_{d}$, 50\% de erro nas distâncias entre as juntas $p^{i-1}_{i-1,i}$ ($i=1,2,3$) e um pequeno erro de $0.01^\circ$ nos eixos, devido aos limites de precisão do algoritmo de identificação.
+%
+\begin{figure}[!htpb]
+\centering
+\includegraphics[width=1.0\columnwidth]{results/simulation_cropped}
+\caption{Resposta transitória e estacionária para o controlador proposto.}
+%Transitory and steady state responses for the proposed controller.
+\label{fig:simulation}
+\end{figure}
+
+%In \fref{fig:simulation}(a), note that the initial RPY error is zero due to the smooth target reference trajectory.
+%
+Na \fref{fig:simulation}(a), note que o erro RPY inicial é zero, devido à trajetória de referência suave.
+%
+%Also, the joint torques reach saturation during the transient response, although it does not cause significant performance degradation on the steady state response, showed on \fref{fig:simulation}(b).
+%
+Além disso, os torques nas juntas atingem a região de saturação durante o transiente, porém sem causar queda de desempenho (\fref{fig:simulation}(b)).
+
+%The biases associated to pitch and yaw in \fref{fig:simulation}(a), (b) are due to uncertainty in $p^{i-1}_{i-1,i}$ ($i=1,2,3$) and to sensor noise/bias propagated upwards the ISP kinematic chain in the LOS reference generation step and in the computation of $\eta_{c_2}$ and $\dot{\eta}_{c_2}$ for the outer tracking controller in \eqref{eq:outer_ctrl_law}.
+
+Os níveis de bias associados aos canais de pitch e yaw em \fref{fig:simulation}(a) e (b) devem-se à incerteza em $p^{i-1}_{i-1,i}$ ($i=1,2,3$) e ao ruído/bias dos sensores.
+
+%The jitter on the steady state response for the RPY errors is of the order of $0.2^\circ$, even for $20\%$ of error in the \textit{dynamic} parameters $\Pi_d$, showing the robustness of the proposed controller with respect to imperfect dynamic cancellation in the inner controller proposed in \eqref{eq:inner_ctrl_law}.
+%
+O nível de jitter na resposta estacionária é da ordem de $0.2^\circ$, mesmo para $20\%$ de erro em $\Pi_d$, demonstrando a robustez o controlador proposto em relação ao cancelamento imperfeito da dinâmica em \eqref{eq:inner_ctrl_law}.
+%
+%This result is similar to the one obtained in \cite{Reis2018}.
+%
+Este é um resultado similar ao obtido em \cite{Reis2018}.
+%
+%However, further simulations showed that the RPY jitter in fact \textit{decreases} for smaller uncertainties in the geometric parameters $\Pi_g$, as expected from Theorem \ref{th:theorem1}.
+%
+Além disso, simulações adicionais demonstram que o jitter de fato {\it decresce} para incertezas menores em $\Pi_g$, como esperado devido ao {\bf Teorema \ref{th:theorem1}}.
+
+%The steady state response for the joint torques remains bounded below the actuator saturation limits. Its nonzero DC level is due to the presence of \textit{mechanical imbalance} on the ISP geometric structure.
+
+A resposta estacionária para os torques nas juntas mantém-se limitada abaixo dos limites de saturação.
+Seu nível DC diferente de zero deve-se à presença de {\it desbalanceamento mecânico} na estrutura geométrica da ISP.
+
+% Figure \ref{fig:simulator} shows an Unity-based user interface used for visualization. 
+%
+% The robotics simulator Gazebo provides the necessary framework for implementing the environment dynamics and to test control algorithms in a virtual environment simulating a real world application.
+%
+% The proposed control algorithms were also implemented in this simulator, using the real-time software architecture provided by the ROCK robotics framework.
+
+%Simulations were performed in the real world simulator Gazebo and in an Unity-based user interface, and control was implemented under the real-time software architecture provided by the ROCK robotics framework, already envisioning the application of the proposed solutions on an ISP.
+
+

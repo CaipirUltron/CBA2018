@@ -1,0 +1,177 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Identificação dos Eixos das Juntas}
+\label{sec:identification}
+
+%As discussed, uncertainties on the geometric parameters
+%($\widehat\Pi_g$) can significantly impact the system performance, since these
+%parameters are used to compute the desired LOS~\eqref{eq:ref_RPY}.
+%%
+%In particular, uncertainties on the joint axes vectors $h_i^{i-1}$ have a
+%greater impact on the desired LOS vector.
+%%
+%In this section, an identification algorithm is proposed to obtain estimations
+%of these parameters.
+
+Como discutido anteriormente, incertezas nos parâmetros geométricos ($\widehat\Pi_g$) podem 
+impactar a performance do sistema de maneira significativa, já que tais parâmetros são utilizados 
+no cálculo do LOS desejado~\eqref{eq:ref_RPY}.
+
+%The identification procedure is performed on land, prior to moving the ISP to
+%the vessel, so that it is reasonable to assume $\mathbf{E}_b \equiv \mathbf{E}_0$.
+%
+O procedimento de identificação é feito em terra, antes da instalação da ISP no navio. 
+Portanto, é razoável supor que $\mathbf{E}_b \equiv \mathbf{E}_0$.
+%
+%To obtain the camera orientation with respect to the inertial frame
+%$\mathbf{E}_0$, assume that an IMU is rigidly attached to the ISP last gimbal, with an
+%associated reference frame $\mathbf{E}_{s}$.
+%
+Para obter a orientação da câmera em relação à $\mathbf{E}_0$, suponha que uma IMU 
+encontra-se rigidamente acoplada ao último gimbal da ISP, onde $\mathbf{E}_{s}$ é seu sistema de referência correspondente. 
+%
+%Furthermore, let $R_{ij}^k$ denote the orientation of frame $\mathbf{E}_j$ relative to frame $\mathbf{E}_i$, obtained at a time instant $t_k$.
+%
+Além disso, $R_{ij}^k$ representa a orientação de $\mathbf{E}_j$ relativa à $\mathbf{E}_i$, obtida no instante de tempo $t_k$.
+%
+Então:
+%
+\begin{align}
+R_{0 s}^k = R_{01}^k R_{12}^k R_{23}^k R_{3c} R_{c s}
+\end{align}
+%
+%where $R_{3c}$, $R_{c s}$ does not vary with time, since they represent rigid
+%body transformations.
+%
+onde $R_{3c}$, $R_{c s}$ são constantes.
+%já que representam transformações de corpo rígido.
+%
+%Taking two measurements at times $t_k$ and $t_{k+1}$, one may define:
+%
+Utilizando duas medidas distintas em $t_k$ e $t_{k+1}$, definimos:
+%
+\begin{align}
+R^{k,k+1} &= R_{0s}^k \left( R_{0s}^{k+1} \right)^\mathbf{T} \nonumber \\ 
+&= R_{01}^k R_{12}^k R_{23}^k
+    \left( R_{01}^{k+1} R_{12}^{k+1} R_{23}^{k+1} \right)^\mathbf{T}
+\label{eq:ident.Rmn}
+\end{align}
+%
+%Based on~\eqref{eq:ident.Rmn}, the following identification procedure is
+%proposed:
+%
+Utilizando~\eqref{eq:ident.Rmn}, o seguinte procedimento de identificação é proposto:
+%
+\begin{enumerate}
+    \item Obtenha a orientação inicial $R_{0s}^0$;
+    \item Começando de $j=1$, mantenha todas as outras juntas estacionárias e rotacione a $j$-ésima junta, obtendo uma nova medida $R_{0 s}^k$;
+		%Starting from $j=1$, hold the positions of joints $i$ : $i \neq j$,
+    %rotate joint $j$ and acquire a new measurement $R_{0 s}^k$.
+    \item Repita o processo para a junta $j$ até obter uma quantidade suficiente de dados;
+		%Repeat for joint $j$ until a sufficient amount of data has been
+    %obtained.
+    \item Mova para a junta $j+1$ e repita todo o processo.
+		%Move to the next joint and repeat the procedure.
+\end{enumerate}
+
+%Since joints $i$ : $i > j$ do not move between successive measurements,
+%starting from $j = 1$, \eqref{eq:ident.Rmn} simplifies to:
+%
+Já que as juntas $i$ ($i > j$) não se movem entre duas medidas consecutivas, começando de $j = 1$, \eqref{eq:ident.Rmn} simplifica-se para:
+%
+\begin{align}
+R^{k,k+1} = \left[r_{mn}\right] = 
+    \text{exp}\left({\mathbf{S}(h_1^{b}) (q_1^{k+1} - q_1^k)}\right) \,,
+\label{eq:ident.joint.1.R}
+\end{align}
+%
+%where the only unknown variable is $h_1^0$.
+%
+onde a única variável desconhecida é $h_1^0$.
+%
+%Solving~\eqref{eq:ident.joint.1.R} yields:
+%
+Resolvendo para~\eqref{eq:ident.joint.1.R}, obtém-se:
+%
+\begin{align}
+h_1^b = \frac{1}{2 \sin(q_1^{k+1} - q_1^k)}
+    \begin{bmatrix}
+        r_{32} - r_{23} \\
+        r_{13} - r_{31} \\
+        r_{21} - r_{12} 
+    \end{bmatrix}\,.
+\label{eq:ident.joint.1.h}
+\end{align}
+%
+%where $R = \left[r_{mn}\right]$.
+
+%Since there are multiple measurements for every joint, there are multiple
+%estimations of $h_1^0$.
+%
+Já que múltiplas medidas para cada junta foram tomadas, existem múltiplas estimativas para $h_1^0$.
+%
+%Let $\mathsf{H}_1 \subset \mathbb{S}^2$, where $\mathbb{S}^2$ is the unit sphere
+%in $\mathbb{R}^3$, be the set (sample space) containing every $k$-th estimation
+%obtained from equations~\eqref{eq:ident.joint.1.R}
+%and~\eqref{eq:ident.joint.1.h}.
+%
+Seja $\mathsf{H}_1 \subset \mathbb{S}^2$ o conjunto (espaço amostral) contendo todas as $k$ estimativas obtidas das equações~\eqref{eq:ident.joint.1.R}
+e~\eqref{eq:ident.joint.1.h}, onde $\mathbb{S}^2$ é a esfera unitária em $\mathbb{R}^3$.
+%
+%Functions $\mathrm{mean}(.)$ and $\mathrm{var}(.)$ denote the usual sample mean
+%and sample variance.
+%
+As funções $\mathrm{mean}(.)$ e $\mathrm{var}(.)$ denotam a média e a variância do conjunto.
+%
+%The final estimation $\hat{h}_1^0$ of axis $h_1^0$ is:
+%
+A estimativa final $\hat{h}_1^0$ do eixo $h_1^0$ é dada por:
+%
+\begin{align}
+\hat{h}_1^0 = \mathrm{mean}\left(
+    \mathrm{ball}\left(
+        \mathrm{mean}(\mathsf{H}_1), \alpha\sqrt{\mathrm{var}(\mathsf{H}_1)}
+    \right)
+    \cap
+    \mathsf{H}_1
+\right)\,,
+\label{eq:ident.joint.1.final}
+\end{align}
+%
+%where $\mathrm{ball}(x,a)$ is a ball of radius $a$ centered at $x$ and
+%$\alpha > 0$.
+%
+onde $\mathrm{ball}(x,a)$ é uma bola de raio $a$ centrada em $x$ e $\alpha > 0$.
+%
+%Basically, this estimation is the mean of samples $h \in \mathsf{H}_1$ located
+%sufficiently close to the mean of $\mathsf{H}_1$.
+%
+Basicamente, esta estimativa é a média das amostras $h \in \mathsf{H}_1$ localizada suficientemente próxima à média de $\mathsf{H}_1$.
+
+%To obtain an estimation $\hat{h}_2^1$ for $h_2^1$, matrices $R_{01}^k$ and
+%$R_{01}^{k+1}$ are computed using $\hat{h}_1^0$, such
+%that~\eqref{eq:ident.joint.1.R} is modified to
+%
+Para obter a estimativa $\hat{h}_2^1$ para $h_2^1$, as matrizes $R_{01}^k$ e
+$R_{01}^{k+1}$ são calculadas usando $\hat{h}_1^0$, tal que~\eqref{eq:ident.joint.1.R} é modificada para:
+%
+\begin{align}
+R &= \left( R_{01}^k \right)^\mathbf{T} R^{k,k+1} R_{01}^{k+1} \nonumber \\
+&= \text{exp}\left({\mathbf{S}(h_2^1) (q_2^{k+1} - q_2^k)}\right) \,,
+\label{eq:ident.joint.2.R}
+\end{align}
+%
+%and equations~\eqref{eq:ident.joint.1.h} and~\eqref{eq:ident.joint.1.final}
+%are applied to obtain the estimation $\hat{h}_2^1$.
+%
+e as equações~\eqref{eq:ident.joint.1.h} and~\eqref{eq:ident.joint.1.final} são utilizadas para obter a estimativa $\hat{h}_2^1$.
+%
+%This procedure is repeated to obtain $\hat{h}_3^2$.
+%
+O procedimento é repetido para obter $\hat{h}_3^2$.
+
+\begin{remark}
+%The identification algorithm described in this section is easily generalized
+%for a robot with an arbitrary number of rotating joints.
+%
+O algoritmo de identificação descrito nesta seção pode ser facilmente generalizado para um robô com $n>0$ juntas rotacionais.
+\end{remark}

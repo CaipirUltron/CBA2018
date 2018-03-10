@@ -1,0 +1,53 @@
+
+\documentclass[
+    tikz,
+    border={0pt 0pt 20pt 0pt}, % left bottom right top
+]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{pgfplots}
+\usepackage{grffile}
+\pgfplotsset{compat=newest}
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{arrows.meta}
+\usepgfplotslibrary{patchplots}
+\usepackage{amsmath}
+
+\begin{document}
+%
+\begin{tikzpicture}
+
+\begin{axis}[%
+width=9cm,
+height=4cm,
+at={(0.772in,0.484in)},
+scale only axis,
+xmin=0,
+xmax=210,
+xlabel={Time (seconds)},
+xtick={0,40,...,200},
+ytick={-60,-30,...,60},
+ymin=-80,
+ymax=80,
+title={Angle (deg)},
+title style={at={(0.08,0.96)}, anchor=south west, align=left},
+xmajorgrids,
+ymajorgrids,
+legend columns=3,
+legend style={at={(1.0,1.03)}, anchor=south east, legend cell align=left, align=left, draw=white!15!black}
+]
+\addplot [solid, color=blue]
+  table[]{./data/identification-1.tsv};
+\addlegendentry{joint 1}
+
+\addplot [dash dot, color=red]
+  table[]{./data/identification-2.tsv};
+\addlegendentry{joint 2}
+
+\addplot [dashed, color=black]
+  table[]{./data/identification-3.tsv};
+\addlegendentry{joint 3}
+
+\end{axis}
+\end{tikzpicture}%
+\end{document}

@@ -1,0 +1,133 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Controle em Cascata}
+\label{sec:control}
+
+%A cascade topology is proposed to control the camera LOS. The inner controller implements a \textit{computed torque} method for stabilization, which ideally cancels the dynamic disturbances in \eqref{eq:HEADS_lagrange_dynamics_indirect}, linearizing the system into a decoupled double integrator in joint space. The outer controller is a \textit{PID} in operational space with reference acceleration \textit{feed-forward} and a linearization term to cancel further \textit{kinematic} disturbances acting on the system.
+%
+Uma topologia em cascata é proposta para o controle de LOS da câmera. O controlador interno é baseado no método do \textit{torque computado}, que idealmente cancela os distúrbios dinâmicos em \eqref{eq:HEADS_lagrange_dynamics_indirect}, transformando o sistema em um duplo integrador no espaço das juntas. O controlador externo é um \textit{PID} no espaço operacional com feed-forward de aceleração e um termo linearizante para cancelar distúrbios \textit{cinemáticos} agindo no sistema.
+%
+%Its objective is to track a given orientation reference in the camera RPY angles.
+%
+%The inner controller is:
+%
+O controlador interno é dado por:
+%
+\begin{align}
+u(t) &= \widehat{M}_{qq}\, z(t) + \widehat{\tau}_{d} \,,
+\label{eq:inner_ctrl_law}
+\end{align}
+%
+onde $\widehat{M}_{qq} = M_{qq}(q,\widehat{\Pi}_{g},\widehat{\Pi}_{d})$ e o distúrbio $\widehat{\tau}_{d}$ é dado por $\widehat{\tau}_{d} = \tau_{d}(q,\dot{q},V_{0b}^b,\dot{V}_{0b}^b,\eta_{b_2},\widehat{\Pi}_{g},\widehat{\Pi}_{d})$.
+%
+% where $\widehat{M}_{qq} = M_{qq}(\widehat{\Pi}_{g},\widehat{\Pi}_{d})$ and $\widehat{\tau}_{d} = \tau_{d}(\widehat{\Pi}_{g},\widehat{\Pi}_{d})$.
+%
+%In the hypothesis of known system parameters ($\widehat{\Pi}_g = \Pi_g$ and $\widehat{\Pi}_d = \Pi_d$), this controller linearizes the system into a double integrator in joint space.
+%
+Considerando $\widehat{\Pi}_g \ne \Pi_g$ e $\widehat{\Pi}_d \ne \Pi_d$, este controlador transforma o sistema em um duplo integrador no espaço das juntas com uma perturbação dependente do erro paramétrico.
+%
+%The outer tracking controller is designed as:
+%
+O controlador externo é dado por:
+%
+\vspace{-2mm}
+%
+\begin{align}
+\lambda(t) &= \ddot{\eta}_{d_2} + K_{D} \, \dot{\widetilde{\eta}}_{c_2} + K_{P} \, \widetilde{\eta}_{c_2} + K_I \int^t_0 \widetilde{\eta}_{c_2}(\tau) d\tau \,, \nonumber \\
+\sigma(t) &= \widehat{L}_q \, \dot{q} + \widehat{J}_\omega \, \dot{\omega}^b_{0b} + \widehat{L}_\omega \, \omega^b_{0b} \,, \nonumber \\
+z(t) &= (\widehat{J}_q)^{-1} \left[ \lambda(t) - \sigma(t) \right] \,,
+\label{eq:outer_ctrl_law}
+\end{align}
+%
+onde $K_{P},\,K_{I},\,K_{D} \in \mathbb{R}^{3\times3}$ são matrizes de ganho e $\widehat{J}_q = J_q(\widehat{\Pi}_{g})$, $\widehat{L}_q = L_q(\widehat{\Pi}_{g})$, $\widehat{J}_\omega = J_\omega(\widehat{\Pi}_{g})$ e $\widehat{L}_\omega = L_\omega(\widehat{\Pi}_{g})$.
+O restante das dependências das matrizes $J_q$, $J_\omega$, $L_q$ and $L_\omega$ foram omitidas por simplicidade, mas podem ser obtidas de \eqref{eq:camera_orientation}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{teorema}
+\label{th:theorem1}
+Sejam \eqref{eq:HEADS_lagrange_dynamics_indirect} e \eqref{eq:camera_orientation} as equações dinâmicas e cinemáticas do mecanismo, respectivamente. 
+Considerando a formulação do problema da \sref{sec:problem_formulation}, defina o vetor completo de parâmetros $\Pi^\mathsf{T} = \left[\!\!\begin{array}{cc} \Pi^\mathsf{T}_{g} \!\!&\!\! \Pi^\mathsf{T}_{d} \end{array}\!\!\right]$ e suponha que:
+%the following:
+%
+\begin{enumerate}[label=(\roman*)]
+%
+\item $T_{0c}(\eta_{c_2}(t))$ é não-singular para todo $t>0$; \label{assump:1}
+\vspace{-1mm}
+%
+%\item the kinematic parameters $\Pi_{kin}$ are completely known; \label{assump:2}
+%
+\item existem $\rho_1,\rho_2 > 0$ tais que: $\norm{\dot{q}} \leq \rho_1$, $\norm{\ddot{q}} \leq \rho_2$ para todo $t>0$; \label{assump:3}
+%\vspace{-5mm}
+%
+\item existem $\epsilon_1,\epsilon_2 \!>\! 0$ tais que: $\norm{V^b_{0b}} \!\leq\! \epsilon_1$, $\norm{V^b_{0b}} \!\leq\! \epsilon_2$ para todo $t>0$. \label{assump:4}
+%
+\end{enumerate}
+%
+%Then, the control law \eqref{eq:inner_ctrl_law}, \eqref{eq:outer_ctrl_law} ensures that the camera RPY orientation error norm $\norm{\widetilde{\eta}_{c_2}}$ ultimately converges to the residual set of order $\mathcal{O}(\norm{\widetilde{\Pi}})$, i.e., the constant $\rho$ in \eqref{eq:op_error_bound} is bounded by $\norm{\widetilde{\Pi}}$. Moreover, $\rho \rightarrow 0$ as $\norm{\widetilde{\Pi}} \rightarrow 0$.
+%
+Então, as leis de controle \eqref{eq:inner_ctrl_law}, \eqref{eq:outer_ctrl_law} asseguram que a norma do erro RPY de orientação da câmera $\norm{\widetilde{\eta}_{c_2}}$ converge para um conjunto residual de ordem $\mathcal{O}(\norm{\widetilde{\Pi}})$, isto é, a constante $\rho$ em \eqref{eq:op_error_bound} é limitada por $\norm{\widetilde{\Pi}}$. Além disso, $\rho \rightarrow 0$ se $\norm{\widetilde{\Pi}} \rightarrow 0$.
+%
+\end{teorema}
+
+\begin{proof}
+%First, note that \aref{assump:1} is needed so that $\widehat{J}^{\,\,\,-1}_q$ can be computed in \eqref{eq:outer_ctrl_law}.
+%
+Primeiramente, note que a \aref{assump:1} é necessária para que $\widehat{J}^{\,-1}_q$ possa ser calculada em \eqref{eq:outer_ctrl_law}.
+%
+%Now, define the errors $\widetilde{M}_{qq} = M_{qq} - \widehat{M}_{qq}$ and $\widetilde{\tau}_d = \tau_d - \widehat{\tau}_d$ due to $\widetilde{\Pi} \neq 0$. Substituting the inner control law \eqref{eq:inner_ctrl_law} into \eqref{eq:HEADS_lagrange_dynamics_indirect} gives:
+%
+Defina os erros $\widetilde{M}_{qq} = M_{qq} - \widehat{M}_{qq}$ e $\widetilde{\tau}_d = \tau_d - \widehat{\tau}_d$ devido à $\widetilde{\Pi} \neq 0$.
+Substituindo a lei de controle interna \eqref{eq:inner_ctrl_law} em \eqref{eq:HEADS_lagrange_dynamics_indirect}, obtém-se:
+%
+\begin{align}
+\ddot{q} &= z(t) - \widehat{M}^{-1}_{qq} \, \widetilde{\tau}_q \,, \label{eq:ddotq} \\
+\widetilde{\tau}_q &= \widetilde{M}_{qq} \, \ddot{q} + \widetilde{\tau}_d \,.
+\end{align}
+%
+%Next, define the matrices $\widetilde{J}_q = J_q - \widehat{J}_q$, $\widetilde{J}_\omega = J_\omega - \widehat{J}_\omega$, $\widetilde{L}_q = L_q - \widehat{L}_q$ and $\widetilde{L}_\omega = L_\omega - \widehat{L}_\omega$, representing the respective error on the matrices due to $\widetilde{\Pi}_{g} \ne 0$.
+%
+Agora, defina as matrizes $\widetilde{J}_q = J_q - \widehat{J}_q$, $\widetilde{J}_\omega = J_\omega - \widehat{J}_\omega$, $\widetilde{L}_q = L_q - \widehat{L}_q$ e $\widetilde{L}_\omega = L_\omega - \widehat{L}_\omega$, representando o erro matricial devido à $\widetilde{\Pi}_{g} \ne 0$.
+%
+%Replacing $\ddot{q}$ in \eqref{eq:camera_orientation3} by its expression in \eqref{eq:ddotq} and using the outer control law \eqref{eq:outer_ctrl_law}, the RPY error equation is:
+%
+Substituindo $\ddot{q}$ em \eqref{eq:camera_orientation} por sua expressão em \eqref{eq:ddotq}, e usando a lei de controle externa \eqref{eq:outer_ctrl_law}, a equação dinâmica do erro RPY é:
+%
+\begin{align}
+%\ddot{\widetilde{\eta}}_{c_{2}} + K_D \, \dot{\widetilde{\eta}}_{c_{2}} + K_P \, \widetilde{\eta}_{c_{2}} + K_I \, \int^{t}_{0} \!\!\widetilde{\eta}_{c_{2}}(\tau) \, d \tau = \bar{\tau}_d \,, \label{eq:CTPID_error_equation} \\
+\lambda(t) - \ddot{\eta}_{c_{2}} = \bar{\tau}_d \,, \label{eq:CTPID_error_equation} \\
+\bar{\tau}_d = \widehat{J}_q \, \widehat{M}^{-1}_{qq} \, \widetilde{\tau}_q - \Delta \eta_{c_2} \,,
+\label{eq:tau_d}
+\end{align}
+%
+onde $\Delta \eta_{c_2} = \widetilde{J}_q \, \ddot{q} + \widetilde{L}_q \, \dot{q} + \widetilde{J}_\omega \, \dot{\omega}^b_{0b} + \widetilde{L}_\omega\,\omega^b_{0b}$ 
+é um distúrbio residual devido à $\widetilde{\Pi}_{g} \ne 0$.
+%
+%Note that, due to \eqref{eq:dyn_regressor} and \eqref{eq:kin_regressor}, it is possible to write \eqref{eq:tau_d} as:
+%
+Note que, devido à \eqref{eq:dyn_regressor} e \eqref{eq:kin_regressor}, é possível escrever \eqref{eq:tau_d} como:
+%
+\begin{equation}
+\bar{\tau}_d = \widehat{J}_q \, \widehat{M}^{-1}_{qq} \, Y_q \, \widetilde{\Pi}_{d}  - W_\eta \, \widetilde{\Pi}_g \,.
+\label{eq:CTPID_error_equation2}
+\end{equation}
+
+%Now, from Assumptions \ref{assump:3} and \ref{assump:4}, $Y_q$ and $W_{\eta}$ are bounded for all possible values of $q$, $\dot{q}$, $\ddot{q}$, $\eta_{c_2}$, $\eta_{b_2}$, $V^b_{0b}$ and $\dot{V}^b_{0b}$. Besides, $Y_q$ is also bounded with respect to $\Pi_g$.
+%
+Devido à \ref{assump:3} e \ref{assump:3}, $Y_q$ e $W_{\eta}$ são limitados para todos os possíveis valores de $q$, $\dot{q}$, $\ddot{q}$, $\eta_{c_2}$, $\eta_{b_2}$, $V^b_{0b}$ e $\dot{V}^b_{0b}$. Além disso, $Y_q$ também é limitado em relação à $\Pi_g$.
+%
+%Finally, it is also possible to rewrite \eqref{eq:CTPID_error_equation} with respect to $\widetilde{\Pi}$:
+%
+Finalmente, é possível reescrever \eqref{eq:CTPID_error_equation} utilizando $\widetilde{\Pi}$:
+%
+\begin{align}
+%\ddot{\widetilde{\eta}}_{c_{2}} + K_D \, \dot{\widetilde{\eta}}_{c_{2}} + K_P \, \widetilde{\eta}_{c_{2}} + K_I \, \int^{t}_{0} \widetilde{\eta}_{c_{2}}(\tau) \, d \tau = Z_{\eta} \, \widetilde{\Pi} \,,
+\lambda(t) - \ddot{\eta}_{c_{2}} = Z_{\eta} \, \widetilde{\Pi} \,,
+\label{eq:CTPID_error_equation3}
+\end{align}
+%
+com o regressor $Z_{\eta} = \mat{\widehat{J}_q \, \widehat{M}^{-1}_{qq} \, Y_q & -W_\eta}$, que também é limitado devido às limitações de $Y_q$ e $W_{\eta}$.
+%
+%Therefore, $\norm{\bar{\tau}_d} \rightarrow 0$ as $\norm{\widetilde{\Pi}} \rightarrow 0$, and by \eqref{eq:CTPID_error_equation3}, $\tilde{\eta}_{c_{2}}$ tends to a ball of radius $\rho$, where $\rho$ is bounded by $\norm{\widetilde{\Pi}}$.
+%
+Portanto, $\norm{\bar{\tau}_d} \rightarrow 0$ se $\norm{\widetilde{\Pi}} \rightarrow 0$, e devido à \eqref{eq:CTPID_error_equation3}, $\tilde{\eta}_{c_{2}}$ tende à uma bola de raio $\rho$, onde $\rho$ é limitado por $\norm{\widetilde{\Pi}}$.
+%
+\end{proof}
